@@ -5,6 +5,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  console.log("Request body: ", req.body)
   // POST request
   if (req.method == "POST") {
     const userId = req.body.userId

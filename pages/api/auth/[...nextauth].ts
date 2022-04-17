@@ -10,8 +10,8 @@ export default NextAuth({
   // https://next-auth.js.org/configuration/providers/oauth
   providers: [
     FacebookProvider({
-      clientId: process.env.FACEBOOK_ID_DEV as string,
-      clientSecret: process.env.FACEBOOK_SECRET_DEV as string,
+      clientId: process.env.NODE_ENV === "production" ? (process.env.FACEBOOK_ID as string) : (process.env.FACEBOOK_ID_DEV as string),
+      clientSecret: process.env.NODE_ENV === "production" ? (process.env.FACEBOOK_SECRET as string) : (process.env.FACEBOOK_SECRET_DEV as string),
     }),
     // GoogleProvider({
     //   clientId: process.env.GOOGLE_ID as string,
