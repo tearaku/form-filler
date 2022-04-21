@@ -1,0 +1,15 @@
+export type EventData = {
+  title: string,
+  beginDate: Date,
+  endDate: Date,
+  location: string,
+  category: string,
+  groupCategory?: string,
+  drivers?: string,
+  driversNumber?: string,
+  radioFreq: string,
+  radioCodename?: string,
+  tripOverview: string,
+  rescueTime: string,
+  retreatPlan?: string,
+}

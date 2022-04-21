@@ -20,3 +20,9 @@ export type ProfileData = {
   riceAmount: number,
   foodPreference?: string,
 }
+
+export type MinimalProfileData = {
+  name: string,
+  mobileNumber: string,
+  phoneNumber: string,
+}

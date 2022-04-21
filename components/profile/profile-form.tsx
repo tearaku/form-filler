@@ -1,20 +1,17 @@
 import { SubmitHandler, useForm } from "react-hook-form"
 import { useRouter } from "next/router"
-import { ProfileData} from "../components/user-profile-type"
+import { ProfileData} from "../../components/user-profile-type"
 
-export default function UserProfile(props) {
+export default function UserProfileForm(props) {
   const router = useRouter()
 
   const onSubmit: SubmitHandler<ProfileData> = async (data) => {
-    console.log("Submitted \n", data)
-
-    const res = await fetch("/api/profile", {
+    const res = await fetch(`/api/profile/${props.userId}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        userId: props.userId,
         formData: data,
       })
     });
@@ -26,12 +23,16 @@ export default function UserProfile(props) {
     }
   }
 
-  const { register, handleSubmit, watch, formState: { errors } } = useForm<ProfileData>({
-    defaultValues: {
-      ...props.userData,
-      riceAmount: parseFloat(props.userData.riceAmount),
-    }
-  })
+  const { register, handleSubmit, watch, formState: { errors } } = props.userData.hasFullProfile ? 
+    useForm<ProfileData>({
+      defaultValues: {
+        ...props.userData.profile,
+        ...props.userData.minProfile,
+        riceAmount: parseFloat(props.userData.profile.riceAmount),
+      }
+    })
+    : useForm<ProfileData>()
+  
   const isStudent = watch("isStudent")
   const isTaiwanese = watch("isTaiwanese")
 
@@ -66,7 +67,7 @@ export default function UserProfile(props) {
           </div>
         )}
 
-        <label className="label">是否為台灣人？</label>
+        <label className="label">有無台灣身分證字號？</label>
         <select {...register("isTaiwanese", { required: true })} defaultValue={""} className="select select-bordered">
           <option value="" disabled>...</option>
           <option value="true">是，有身分證字號</option>

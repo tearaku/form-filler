@@ -33,7 +33,6 @@ export default NextAuth({
         }
       })
       session.user.id = userData.id
-      console.log(session)
       return session
     }
   },

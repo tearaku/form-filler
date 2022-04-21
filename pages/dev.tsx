@@ -2,13 +2,13 @@ import { useSession, getSession } from "next-auth/react"
 import Layout from "../components/layout"
 import type { NextPageContext } from "next"
 import AccessDenied from "../components/access-denied"
-import { useEffect } from "react"
-import UserProfile from "../components/user-profile"
+import { useEffect, useState } from "react"
+import UserProfile from "../components/profile/user-profile"
+import useSWR from "swr"
 
-export default function Dev(props) {
+export default function Dev() {
   const { data: session, status } = useSession()
   const loading = status === "loading"
-
   // If no session exists, display access denied message
   if (!session) {
     return (
@@ -17,35 +17,36 @@ export default function Dev(props) {
       </Layout>
     )
   }
+  const [profileData, setProfileData] = useState()
+  const [profileIsReady, setProfileisReady] = useState(false)
+  const fetcher = url => fetch(url).then(res => res.json())
+  const { data, error } = useSWR(`/api/profile/${session.user.id}`, fetcher)
 
   useEffect(() => {
-    console.log(props.user)
-  })
+    const parsedData = parseProfileData(data)
+    setProfileData(parsedData)
+    setProfileisReady(true)
+  }, [error])
 
   return (
     <Layout>
       <h1>個人資料</h1>
-      <UserProfile userId={session.user.id} userData={props.user} />
+      {error && <h1>Error in fetching the profile data!</h1>}
+      {!data && <h1>Fetching profile data...</h1>}
+      {profileIsReady &&
+        <UserProfile userId={session.user.id} userData={profileData} />}
     </Layout>
   )
 }
 
-async function fetchUserProfile(id: number) {
-  const userProfile = await prisma.profile.findUnique({
-    where: {
-      userId: id,
-    }
-  })
-  const _dateOfBirth = userProfile.dateOfBirth.toJSON()
-  const dateOfBirth = _dateOfBirth.slice(0, _dateOfBirth.indexOf("T"))
-  const riceAmount = userProfile.riceAmount.toJSON()
+function parseProfileData(userProfile) {
+  const dateOfBirth = userProfile.dateOfBirth.slice(0, userProfile.dateOfBirth.indexOf("T"))
   const isMale = userProfile.isMale ? "true" : "false"
   const isTaiwanese = userProfile.isTaiwanese ? "true" : "false"
   const isStudent = userProfile.isStudent ? "true" : "false"
   return {
     ...userProfile,
     dateOfBirth: dateOfBirth,
-    riceAmount: riceAmount,
     isMale: isMale,
     isStudent: isStudent,
     isTaiwanese: isTaiwanese,
@@ -53,12 +54,9 @@ async function fetchUserProfile(id: number) {
 }
 
 export async function getServerSideProps(context: NextPageContext) {
-  const fetchedSession = await getSession(context)
-  const userProfile = await fetchUserProfile(fetchedSession.user.id)
   return {
     props: {
-      session: fetchedSession,
-      user: userProfile,
+      session: await getSession(context),
     },
   }
 }
