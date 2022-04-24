@@ -1,6 +1,6 @@
 import UserProfileForm from "./profile-form"
 import useSWR from "swr"
-import { MinimalProfileData, ProfileData } from "../user-profile-type"
+import { MinimalProfileData, ProfileData } from "./user-profile-type"
 
 export default function UserProfile(props) {
   const fetcher = url => fetch(url).then(res => res.json())
@@ -9,26 +9,22 @@ export default function UserProfile(props) {
   return (
     <div>
       {!data && <p>Loading profile...</p>}
-      {data && <UserProfileForm userData={parseProfileData(data)} />}
+      {data && <UserProfileForm userData={parseProfileData(data.data)} />}
     </div>
   )
 }
 
-function parseProfileData(userData) {
+function parseProfileData(userData : {profile: ProfileData, minProfile: MinimalProfileData}) {
   const userProfile: ProfileData = userData.profile
   const minUserProfile: MinimalProfileData = userData.minProfile
-  const dateOfBirth = userProfile.dateOfBirth.slice(0, userProfile.dateOfBirth.indexOf("T"))
-  const isMale = userProfile.isMale ? "true" : "false"
-  const isTaiwanese = userProfile.isTaiwanese ? "true" : "false"
-  const isStudent = userProfile.isStudent ? "true" : "false"
   return {
     hasFullProfile: userProfile ? true: false,
     profile: {
       ...userProfile,
-      dateOfBirth: dateOfBirth,
-      isMale: isMale,
-      isStudent: isStudent,
-      isTaiwanese: isTaiwanese,
+      dateOfBirth: userProfile.dateOfBirth.slice(0, userProfile.dateOfBirth.indexOf("T")),
+      isMale: userProfile.isMale ? "true" : "false",
+      isStudent: userProfile.isStudent ? "true" : "false",
+      isTaiwanese: userProfile.isTaiwanese ? "true" : "false",
     },
     minProfile: minUserProfile,
   }

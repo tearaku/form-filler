@@ -1,14 +1,16 @@
+import { Attendance } from "../../types/attendance"
+
 export type EquipData = {
   name: string,
   des: string,
 }
 
-export type Attendant = {
-  userId: number,
-  eventId: number,
-  role: string,
-  jobs?: string,
-}
+// export type Attendant = {
+//   userId: number,
+//   eventId: number,
+//   role: string,
+//   jobs?: string,
+// }
 
 export type EventData = {
   title: string,
@@ -57,5 +59,5 @@ export type EventData_API = {
   
   id: number,
   inviteToken: string,
-  attendants: Attendant[],
+  attendants: Attendance[],
 }

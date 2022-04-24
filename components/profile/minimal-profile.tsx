@@ -1,6 +1,6 @@
 import { SubmitHandler, useForm } from "react-hook-form"
 import { useRouter } from "next/router"
-import { MinimalProfileData } from "../user-profile-type"
+import { MinimalProfileData } from "./user-profile-type"
 import useSWR from "swr"
 
 export default function MinimalProfile(props) {

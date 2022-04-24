@@ -1,6 +1,6 @@
 import { SubmitHandler, useForm } from "react-hook-form"
 import { useRouter } from "next/router"
-import { ProfileData} from "../../components/user-profile-type"
+import { ProfileData} from "./user-profile-type"
 
 export default function UserProfileForm(props) {
   const router = useRouter()

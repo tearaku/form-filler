@@ -3,6 +3,7 @@ import { getSession, useSession } from "next-auth/react"
 import { useRouter } from "next/router"
 import { useEffect, useState } from "react"
 import useSWR from "swr"
+import AttendanceList from "../../components/event/attendance-list"
 import { EquipData, EventData, EventData_API } from "../../components/event/event-type"
 import EventRegister from "../../components/event/register"
 import { equipBaseList, techBaseList } from "../../components/event/register"
@@ -13,6 +14,7 @@ export default function EventPage() {
   const [viewerRole, setViewerRole] = useState("visitor")
   const [eventData, setEventData] = useState<EventData_API>()
   const [editMode, toggleEditMode] = useState(false)
+  const [activeTab, setActiveTab] = useState(0)
 
   const router = useRouter()
 
@@ -48,14 +50,26 @@ export default function EventPage() {
   return (
     <Layout>
       <h1>Viewer role in event: {viewerRole}</h1>
-      {(viewerRole == "Host") &&
-        <button onClick={() => toggleEditMode(prev => !prev)} className="btn btn-info">編輯模式 {!editMode ? "ON": "OFF"}</button>}
-      {!eventData && <p>Loading event data...</p>}
-      {eventData &&
-        <EventRegister readMode={!editMode} userId={session.user.id}
-          eventInfo={{ eventData: toForm(eventData), eventId: eventData.id }}
-        />
-      }
+      <div className="btn-group grid grid-cols-2">
+        <button onClick={() => {setActiveTab(0)}} className="btn btn-outline">隊伍基本資料</button>
+        <button onClick={() => {setActiveTab(1)}} className="btn btn-outline">相關成員資料</button>
+      </div>
+      <br />
+      {activeTab == 0 &&
+        <main>
+          {(viewerRole == "Host") &&
+            <button onClick={() => toggleEditMode(prev => !prev)} className="btn btn-info">編輯模式 {!editMode ? "ON" : "OFF"}</button>}
+          {!eventData && <p>Loading event data...</p>}
+          {eventData &&
+            <EventRegister readMode={!editMode} userId={session.user.id}
+              eventInfo={{ eventData: toForm(eventData), eventId: eventData.id }}
+            />
+          }
+        </main>}
+      {activeTab == 1 &&
+        <main>
+          <AttendanceList memberList={eventData.attendants}/>
+        </main>}
     </Layout>
   )
 }

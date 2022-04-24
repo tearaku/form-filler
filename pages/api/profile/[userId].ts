@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { ProfileData } from '../../../components/user-profile-type'
+import { ProfileData } from '../../../components/profile/user-profile-type'
 
 export default async function handler(
   req: NextApiRequest,
@@ -25,8 +25,10 @@ export default async function handler(
     })
 
     res.status(200).send({
-      profile: userProfile,
-      minProfile: minUserProfile,
+      data: {
+        profile: userProfile,
+        minProfile: minUserProfile,
+      },
       message: "User profile: successfully found.",
     })
     return

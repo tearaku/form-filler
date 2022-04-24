@@ -149,7 +149,7 @@ export default function EventRegister({ userId, readMode, eventInfo }: PropType)
                 <label className="label">裝備數量／形容</label>
                 <input {...register(`equip_add.${index}.des` as const, { required: true })} type="text" disabled={readMode} className="input input-bordered w-full max-w-xs" />
               </div>
-              <button type="button" onClick={() => equipFields.remove(index)} className="btn btn-error btn-square inline-block">刪除</button>
+              <button type="button" onClick={() => equipFields.remove(index)} disabled={readMode} className="btn btn-error btn-square inline-block">刪除</button>
             </div>
           )
         })}
@@ -182,7 +182,7 @@ export default function EventRegister({ userId, readMode, eventInfo }: PropType)
                 <label className="label">裝備數量／形容</label>
                 <input {...register(`techEquip_add.${index}.des` as const, { required: true })} type="text" disabled={readMode} className="input input-bordered w-full max-w-xs" />
               </div>
-              <button type="button" onClick={() => techEquipFields.remove(index)} className="btn btn-error btn-square inline-block">刪除</button>
+              <button type="button" onClick={() => techEquipFields.remove(index)} disabled={readMode} className="btn btn-error btn-square inline-block">刪除</button>
             </div>
           )
         })}

@@ -13,10 +13,11 @@ export default async function handler(
       },
       rejectOnNotFound: true,
     }).catch(err => {
-      res.status(500).json({ message: "User data not found." })
+      res.status(500).send({ message: "User data not found." })
       return
     })
-    res.status(200).json(user)
+    res.status(200).send({data: user, message: "User data query: success."})
+    return
   }
 
   res.status(405).send({ message: "Request not allowed." })

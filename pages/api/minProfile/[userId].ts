@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { MinimalProfileData } from '../../../components/user-profile-type'
+import { MinimalProfileData } from '../../../components/profile/user-profile-type'
 
 export default async function handler(
   req: NextApiRequest,
