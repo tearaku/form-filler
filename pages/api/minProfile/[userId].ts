@@ -32,6 +32,7 @@ export default async function handler(
       return
     }
     res.status(200).send(minUserProfile)
+    return
   }
 
   if (req.method == "GET") {

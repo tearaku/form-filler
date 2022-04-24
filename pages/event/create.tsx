@@ -25,7 +25,7 @@ export default function CreateEvent(props) {
   return (
     <Layout>
       <h1>新增隊伍</h1>
-      <EventRegister />
+      <EventRegister readMode={false} userId={session.user.id} />
     </Layout>
   )
 }

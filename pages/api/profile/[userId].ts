@@ -8,7 +8,6 @@ export default async function handler(
   // GET request
   if (req.method == "GET") {
     const userId = parseInt(req.query.userId as string)
-    console.log("/api/profile/[userId]: has userId of = ", userId)
     const userProfile = await prisma.profile.findUnique({
       where: {
         userId: userId,

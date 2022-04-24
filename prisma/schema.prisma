@@ -93,6 +93,7 @@ model Attendance {
   @@id([eventId, userId])
 }
 
+// TODO: cascading delete on related fields...?
 model Event {
   id              Int       @id @default(autoincrement())
   inviteToken     String
@@ -112,7 +113,10 @@ model Event {
   retreatPlan     String?
   mapCoordSystem  String
   records         String
-  equipmentList   String
+  equipList       String[]
+  equipDes        String[]
+  techEquipList   String[]
+  techEquipDes    String[]
   
   attendants      Attendance[]  // Contains all attending members & their roles
 }

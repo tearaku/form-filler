@@ -2,8 +2,9 @@ import { useSession, getSession } from "next-auth/react"
 import Layout from "../../components/layout"
 import type { NextPageContext } from "next"
 import AccessDenied from "../../components/access-denied"
-import { useEffect } from "react"
 import Link from "next/link"
+import EventList from "../../components/event/event-list"
+import prisma from "../../utils/prisma"
 
 export default function Event(props) {
   const { data: session, status } = useSession()
@@ -18,11 +19,6 @@ export default function Event(props) {
     )
   }
 
-  useEffect(() => {
-    console.log("Current time is: ", new Date())
-    console.log(props)
-  })
-
   return (
     <Layout>
       <h1>隊伍清單</h1>
@@ -31,6 +27,7 @@ export default function Event(props) {
           <a>新增隊伍</a>
         </Link>
       </button>
+      <EventList events={props.events}/>
     </Layout>
   )
 }
@@ -38,18 +35,28 @@ export default function Event(props) {
 export async function getServerSideProps(context: NextPageContext) {
   const eventList = await prisma.event.findMany({
     where: {
-      beginDate: {
-        lte: new Date(),
+      endDate: {
+        gte: new Date(),
       },
+    },
+    include: {
+      attendants: true,
     },
     orderBy: {
       beginDate: 'asc',
     }
   })
+  const parsedEventList = eventList.map(target => {
+    return ({
+      ...target,
+      beginDate: target.beginDate.toISOString(),
+      endDate: target.endDate.toISOString(),
+    })
+  })
   return {
     props: {
       session: await getSession(context),
-      events: eventList,
+      events: parsedEventList,
     },
   }
 }
