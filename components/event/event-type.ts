@@ -5,13 +5,6 @@ export type EquipData = {
   des: string,
 }
 
-// export type Attendant = {
-//   userId: number,
-//   eventId: number,
-//   role: string,
-//   jobs?: string,
-// }
-
 export type EventData = {
   title: string,
   beginDate: Date | string,

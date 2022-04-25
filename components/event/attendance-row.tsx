@@ -3,6 +3,7 @@ import Image from "next/image";
 import { useEffect } from "react";
 import useSWR from "swr";
 import { Attendance } from "../../types/attendance";
+import { mapEventRoleEnum } from "../../utils/api-parse";
 
 interface PropType {
   memberInfo: Attendance
@@ -33,7 +34,7 @@ export default function AttendanceRow({ memberInfo, index }: PropType) {
           </div>
         </div>
       </td>
-      <td>{memberInfo.role}</td>
+      <td>{mapEventRoleEnum(memberInfo.role)}</td>
       <td>{memberInfo.jobs}</td>
     </tr>
   )

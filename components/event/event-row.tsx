@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { useEffect } from "react"
 import useSWR from "swr"
+import { parseDateString } from "../../utils/api-parse"
 import { EventData_API } from "./event-type"
 
 interface PropType {
@@ -27,8 +28,4 @@ export default function EventRow({ eventData } : PropType) {
       <td>{eventData.location}</td>
     </tr>
   )
-}
-
-function parseDateString(dateStr: string): string {
-  return dateStr.substring(0, dateStr.indexOf("T"))
 }

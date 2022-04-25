@@ -28,7 +28,7 @@ export default function EventRegister({ userId, readMode, eventInfo }: PropType)
   const techEquipFields = useFieldArray({ name: 'techEquip_add', control })
 
   const onSubmit: SubmitHandler<EventData> = async (data) => {
-    const apiEndpoint = (eventInfo) ? `/api/event/${eventInfo.eventId}`: `/api/event`
+    const apiEndpoint = (eventInfo) ? `/api/event/${eventInfo.eventId}` : `/api/event`
     const res = await fetch(apiEndpoint, {
       method: "POST",
       headers: {
@@ -155,9 +155,10 @@ export default function EventRegister({ userId, readMode, eventInfo }: PropType)
         })}
       </div>
       <br />
-      <div className="tooltip" data-tip="新增自訂一般裝備">
-        <button type="button" onClick={() => { equipFields.append({ name: "", des: "" }) }} className="btn btn-outline">新增（一般）裝備</button>
-      </div>
+      {!readMode &&
+        <div className="tooltip" data-tip="新增自訂一般裝備">
+          <button type="button" onClick={() => { equipFields.append({ name: "", des: "" }) }} className="btn btn-outline">新增（一般）裝備</button>
+        </div>}
       <div className="divider"><h1>技術裝備</h1></div>
       <div className="form-control w-full max-w-s grid grid-cols-3">
         {techBaseList.map((value, index) => {
@@ -188,11 +189,13 @@ export default function EventRegister({ userId, readMode, eventInfo }: PropType)
         })}
       </div>
       <br />
-      <div className="tooltip" data-tip="新增自訂技術裝備">
-        <button type="button" onClick={() => { techEquipFields.append({ name: "", des: "" }) }} className="btn btn-outline">新增技術裝備</button>
-      </div>
+      {!readMode &&
+        <div className="tooltip" data-tip="新增自訂技術裝備">
+          <button type="button" onClick={() => { techEquipFields.append({ name: "", des: "" }) }} className="btn btn-outline">新增技術裝備</button>
+        </div>}
       <br />
-      <button type="submit" className="btn btn-outline btn-success">{!eventInfo && "新增隊伍"}{eventInfo && "更新基本隊伍資訊"}</button>
+      {!readMode &&
+        <button type="submit" className="btn btn-outline btn-success">{!eventInfo && "新增隊伍"}{eventInfo && "更新基本隊伍資訊"}</button>}
     </form>
   )
 }

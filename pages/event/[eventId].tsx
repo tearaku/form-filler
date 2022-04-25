@@ -8,6 +8,7 @@ import { EquipData, EventData, EventData_API } from "../../components/event/even
 import EventRegister from "../../components/event/register"
 import { equipBaseList, techBaseList } from "../../components/event/register"
 import Layout from "../../components/layout"
+import { parseDateString } from "../../utils/api-parse"
 
 export default function EventPage() {
   const { data: session, status } = useSession()
@@ -62,7 +63,7 @@ export default function EventPage() {
           {!eventData && <p>Loading event data...</p>}
           {eventData &&
             <EventRegister readMode={!editMode} userId={session.user.id}
-              eventInfo={{ eventData: toForm(eventData), eventId: eventData.id }}
+              eventInfo={{ eventData: eventData_toForm(eventData), eventId: eventData.id }}
             />
           }
         </main>}
@@ -82,11 +83,7 @@ export async function getServerSideProps(context: NextPageContext) {
   }
 }
 
-function parseDateString(dateStr: string): string {
-  return dateStr.substring(0, dateStr.indexOf("T"))
-}
-
-function toForm(source: EventData_API): EventData {
+function eventData_toForm(source: EventData_API): EventData {
   const {
     equipList, equipDes, techEquipList, techEquipDes,
     id, inviteToken, attendants,

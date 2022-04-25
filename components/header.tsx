@@ -81,11 +81,6 @@ export default function Header() {
               <a>隊伍清單 | Events</a>
             </Link>
           </li>
-          <li className={styles.navItem}>
-            <Link href="/dev">
-              <a>個人資料 | Dev Page</a>
-            </Link>
-          </li>
         </ul>
       </nav>
     </header>

@@ -9,16 +9,19 @@ export default function UserProfile(props) {
   return (
     <div>
       {!data && <p>Loading profile...</p>}
-      {data && <UserProfileForm userData={parseProfileData(data.data)} />}
+      {data && <UserProfileForm userData={parseProfileData(data.data)} userId={props.userId} />}
     </div>
   )
 }
 
-function parseProfileData(userData : {profile: ProfileData, minProfile: MinimalProfileData}) {
+function parseProfileData(userData: { profile: ProfileData, minProfile: MinimalProfileData }) {
+  if (userData == null) {
+    return ({ hasFullProfile: false, profile: null, minProfile: null })
+  }
   const userProfile: ProfileData = userData.profile
   const minUserProfile: MinimalProfileData = userData.minProfile
   return {
-    hasFullProfile: userProfile ? true: false,
+    hasFullProfile: userProfile ? true : false,
     profile: {
       ...userProfile,
       dateOfBirth: userProfile.dateOfBirth.slice(0, userProfile.dateOfBirth.indexOf("T")),

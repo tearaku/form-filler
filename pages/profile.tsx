@@ -21,16 +21,12 @@ export default function Profile(props) {
 
   const [altProfile, setAltProfile] = useState(false)
 
-  useEffect(() => {
-    console.log("Alt profile state: ", altProfile)
-  }, [altProfile])
-
   return (
     <Layout>
       <h1>個人資料</h1>
       <button className="btn btn-accent" onClick={() => setAltProfile(toggle => !toggle)}>
         {!altProfile && <p> 我是留守/山難 || 簡易資料</p>}
-        {altProfile && <p> 我是出隊隊員 || 一罐作業資料</p>}
+        {altProfile && <p> 我是出隊隊員 || 一慣作業資料</p>}
       </button>
       <article>註：若剛更新資料且未看到網頁，請稍先後片刻！</article>
       {!altProfile &&

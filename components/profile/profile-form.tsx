@@ -1,12 +1,21 @@
 import { SubmitHandler, useForm } from "react-hook-form"
 import { useRouter } from "next/router"
-import { ProfileData} from "./user-profile-type"
+import { MinimalProfileData, ProfileData } from "./user-profile-type"
 
-export default function UserProfileForm(props) {
+interface PropType {
+  userData: {
+    hasFullProfile: boolean
+    profile: ProfileData
+    minProfile: MinimalProfileData
+  }
+  userId: number
+}
+
+export default function UserProfileForm({ userData, userId }: PropType) {
   const router = useRouter()
 
   const onSubmit: SubmitHandler<ProfileData> = async (data) => {
-    const res = await fetch(`/api/profile/${props.userId}`, {
+    const res = await fetch(`/api/profile/${userId}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -23,16 +32,16 @@ export default function UserProfileForm(props) {
     }
   }
 
-  const { register, handleSubmit, watch, formState: { errors } } = props.userData.hasFullProfile ? 
+  const { register, handleSubmit, watch, formState: { errors } } = userData.hasFullProfile ?
     useForm<ProfileData>({
       defaultValues: {
-        ...props.userData.profile,
-        ...props.userData.minProfile,
-        riceAmount: parseFloat(props.userData.profile.riceAmount),
+        ...userData.profile,
+        ...userData.minProfile,
+        riceAmount: (userData.profile.riceAmount),
       }
     })
     : useForm<ProfileData>()
-  
+
   const isStudent = watch("isStudent")
   const isTaiwanese = watch("isTaiwanese")
 
