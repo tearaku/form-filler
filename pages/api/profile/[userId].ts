@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { ProfileData } from '../../../components/profile/user-profile-type'
+import prisma from '../../../utils/prisma'
 
 export default async function handler(
   req: NextApiRequest,
@@ -18,11 +19,11 @@ export default async function handler(
       where: {
         userId: userId,
       },
-      rejectOnNotFound: true,
-    }).catch(err => {
-      res.status(500).send({message: "Minimal user profile not found."})
-      return
     })
+    if (!minUserProfile) {
+      res.status(500).send({ message: "Minimal user profile not found." })
+      return
+    }
 
     res.status(200).send({
       data: {

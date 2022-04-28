@@ -29,8 +29,6 @@ export default async function handler(
         },
         role: EventRole[role],
       }
-    }).catch(err => {
-      res.status(500).send({message: err})
     })
     if (!attendance) {
       res.status(500).send({ message: "Creating attendance failed." })

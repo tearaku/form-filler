@@ -1,4 +1,4 @@
-import { Attendance } from "../../types/attendance"
+import { Attendance } from "@prisma/client"
 
 export type EquipData = {
   name: string,

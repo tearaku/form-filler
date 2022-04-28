@@ -8,7 +8,7 @@ import { EquipData, EventData, EventData_API } from "../../components/event/even
 import EventRegister from "../../components/event/register"
 import { equipBaseList, techBaseList } from "../../components/event/register"
 import Layout from "../../components/layout"
-import { parseDateString } from "../../utils/api-parse"
+import { parseDateString, hasAdminRights } from "../../utils/api-parse"
 
 export default function EventPage() {
   const { data: session, status } = useSession()
@@ -26,7 +26,6 @@ export default function EventPage() {
     if (!data) {
       return
     }
-    console.log(data)
 
     setEventData({
       ...data.data,
@@ -39,7 +38,6 @@ export default function EventPage() {
     if (!eventData) {
       return
     }
-    console.log("event data: ", eventData)
     const viewer = eventData.attendants.find(member => {
       return (member.userId == session.user.id)
     })
@@ -50,15 +48,15 @@ export default function EventPage() {
 
   return (
     <Layout>
-      <h1>Viewer role in event: {viewerRole}</h1>
+      <h1>你的身份是：{viewerRole}</h1>
       <div className="btn-group grid grid-cols-2">
-        <button onClick={() => {setActiveTab(0)}} className="btn btn-outline">隊伍基本資料</button>
-        <button onClick={() => {setActiveTab(1)}} className="btn btn-outline">相關成員資料</button>
+        <button onClick={() => { setActiveTab(0) }} className="btn btn-outline">隊伍基本資料</button>
+        <button onClick={() => { setActiveTab(1) }} className="btn btn-outline">相關成員資料</button>
       </div>
       <br />
       {activeTab == 0 &&
         <main>
-          {(viewerRole == "Host") &&
+          {hasAdminRights(viewerRole) &&
             <button onClick={() => toggleEditMode(prev => !prev)} className="btn btn-info">編輯模式 {!editMode ? "ON" : "OFF"}</button>}
           {!eventData && <p>Loading event data...</p>}
           {eventData &&
@@ -69,7 +67,7 @@ export default function EventPage() {
         </main>}
       {activeTab == 1 &&
         <main>
-          <AttendanceList memberList={eventData.attendants}/>
+          <AttendanceList memberList={eventData.attendants} viewer={{id: session.user.id, role: viewerRole}} />
         </main>}
     </Layout>
   )

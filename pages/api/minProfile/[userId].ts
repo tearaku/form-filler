@@ -41,11 +41,11 @@ export default async function handler(
       where: {
         userId: userId,
       },
-      rejectOnNotFound: true,
-    }).catch(err => {
-      res.status(500).send({message: "Minimal profile with given user ID is not found."})
-      return
     })
+    if (!minUserProfile) {
+      res.status(500).send({ message: "Minimal profile with given user ID is not found." })
+      return
+    }
     res.status(200).send(minUserProfile)
     return
   }

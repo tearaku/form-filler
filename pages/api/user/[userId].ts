@@ -11,12 +11,12 @@ export default async function handler(
       where: {
         id: userId,
       },
-      rejectOnNotFound: true,
-    }).catch(err => {
+    })
+    if (!user) {
       res.status(500).send({ message: "User data not found." })
       return
-    })
-    res.status(200).send({data: user, message: "User data query: success."})
+    }
+    res.status(200).send({ data: user, message: "User data query: success." })
     return
   }
 

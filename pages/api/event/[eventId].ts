@@ -42,11 +42,11 @@ export default async function handler(
       include: {
         attendants: true,
       },
-      rejectOnNotFound: true,
-    }).catch(err => {
+    })
+    if (!event) {
       res.status(500).send({ message: "Event with given event id not found." })
       return
-    })
+    }
     res.status(200).send({ data: event, message: "Event query: success!" })
     return
   }
