@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { EventData } from '../../../components/event/event-type'
+import prisma from '../../../utils/prisma'
 
 export default async function handler(
   req: NextApiRequest,
