@@ -81,6 +81,11 @@ export default function Header() {
               <a>隊伍清單 | Events</a>
             </Link>
           </li>
+          <li className={styles.navItem}>
+            <Link href="/committee">
+              <a>幹部清單 | Committee</a>
+            </Link>
+          </li>
         </ul>
       </nav>
     </header>

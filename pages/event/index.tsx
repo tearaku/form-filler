@@ -5,6 +5,7 @@ import AccessDenied from "../../components/access-denied"
 import Link from "next/link"
 import EventList from "../../components/event/event-list"
 import prisma from "../../utils/prisma"
+import { useEffect } from "react"
 
 export default function Event(props) {
   const { data: session, status } = useSession()
