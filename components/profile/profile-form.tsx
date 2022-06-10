@@ -102,6 +102,10 @@ export default function UserProfileForm({ userData, userId, readOnly }: PropType
             <label className="label">護照號碼</label>
             <input {...register("passportNumber", { required: true })} type="text" disabled={readOnly} placeholder="Type here" className="input input-bordered w-full max-w-xs" />
             {errors.passportNumber && errors.passportNumber.type === "required" && <p style={{ color: 'red' }}>請填寫護照號碼！</p>}
+
+            <label className="label">國籍</label>
+            <input {...register("nationality", { required: true })} type="text" disabled={readOnly} placeholder="Type here" className="input input-bordered w-full max-w-xs" />
+            {errors.nationality && errors.nationality.type === "required" && <p style={{ color: 'red' }}>請填寫國籍！</p>}
           </div>
         )}
 

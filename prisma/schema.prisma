@@ -40,6 +40,7 @@ model Profile {
   isTaiwanese            Boolean
   nationalId             String?
   passportNumber         String?
+  nationality            String?
   address                String
   emergencyContactName   String
   emergencyContactMobile String

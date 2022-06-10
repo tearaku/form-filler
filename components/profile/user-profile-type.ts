@@ -7,6 +7,7 @@ export type ProfileData = {
   nationalId?: string,
   engName?: string,
   passportNumber?: string,
+  nationality?: string,
   dateOfBirth: string,
   placeOfBirth: string,
   address: string,
