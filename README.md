@@ -11,9 +11,7 @@ Quick checklist of things to be done, more will be added later
     - [] Minor issue: field arrays -> requires multiple submit-clicks before they're registered as "inputted"
 - [x] Event registration (as non-hosts)
 - [] Pull department info into a separate page
-    - [] Only admin (maybe just through direct db access? XD) & club leader can modify the settings here
     - [] Club leader should be able to transfer its position to someone else (via email? show that on header bar)
 - [] Conforming to FB login requirement (deleting all user info on request)
     - [] Cascading deletes on all info linked to Account
-- [] Switch out all the event-fetching SWRs w/ usage of store (ex: zustand)
 - [] Add FAQ / help instructions (on ALL pages!)

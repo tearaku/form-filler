@@ -1,5 +1,7 @@
-import { getSession, useSession } from "next-auth/react"
-import type { NextPageContext } from "next"
+import { useSession } from "next-auth/react"
+import { authOptions } from "../pages/api/auth/[...nextauth]"
+import { unstable_getServerSession } from "next-auth/next"
+import type { GetServerSideProps } from "next"
 import Layout from "../components/layout"
 import prisma from "../utils/prisma"
 import { Department } from "@prisma/client"
@@ -19,12 +21,8 @@ export default function CommitteePage(props: PropType) {
   const { data: session, status } = useSession()
   const loading = status === "loading"
 
-  if (loading) return (<Layout><h1>Loading...</h1></Layout>)
-  if (!session) return (<Layout><AccessDenied /></Layout>)
-
-  useEffect(() => {
-    console.log(props.viewerIsAdmin)
-  })
+  if (loading) return <Layout><h1>Loading...</h1></Layout>
+  if (!session) return <Layout><AccessDenied /></Layout>
 
   return (
     <Layout>
@@ -40,8 +38,8 @@ export default function CommitteePage(props: PropType) {
   )
 }
 
-export async function getServerSideProps(context: NextPageContext) {
-  const sessionObj = await getSession(context)
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const sessionObj = await unstable_getServerSession(context.req, context.res, authOptions)
   const committees = await prisma.department.findMany()
   // TODO: remove this hard-coded value of webadmin
   const viewerRole = committees.find((dept) => {

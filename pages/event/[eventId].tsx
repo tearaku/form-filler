@@ -1,5 +1,7 @@
-import type { NextPageContext } from "next"
-import { getSession, useSession } from "next-auth/react"
+import type { GetServerSideProps } from "next"
+import { authOptions } from "../api/auth/[...nextauth]"
+import { unstable_getServerSession } from "next-auth/next"
+import { useSession } from "next-auth/react"
 import { useRouter } from "next/router"
 import { useEffect, useState } from "react"
 import useSWR from "swr"
@@ -9,13 +11,15 @@ import EventRegister from "../../components/event/register"
 import { equipBaseList, techBaseList } from "../../components/event/register"
 import Layout from "../../components/layout"
 import { parseDateString, hasAdminRights } from "../../utils/api-parse"
+import { toast } from "react-toastify"
 
-export default function EventPage() {
+export default function EventPage({ backend_url }) {
   const { data: session, status } = useSession()
   const [viewerRole, setViewerRole] = useState("visitor")
   const [eventData, setEventData] = useState<EventData_API>()
   const [editMode, toggleEditMode] = useState(false)
   const [activeTab, setActiveTab] = useState(0)
+  const [waitSubmit, setWaitSubmit] = useState(false)
 
   const router = useRouter()
 
@@ -46,6 +50,55 @@ export default function EventPage() {
     }
   }, [eventData])
 
+  function copyInviteLink(role: string) {
+    navigator.clipboard.writeText(
+      `${document.location.toString()}/join/${eventData.inviteToken}?role=${role}`
+    ).then(() => {
+      toast.success("Link copied!", { autoClose: 1000 })
+    }).catch(() => {
+      toast.error("Failed to copy link.", { autoClose: 1000 })
+    })
+  }
+
+  const generateFiles = async () => {
+    try {
+      setWaitSubmit(true)
+      const submitPromise = fetch(`${backend_url}/event/${router.query.eventId}`, {
+        method: "GET",
+      })
+      const res = await toast.promise(
+        submitPromise,
+        {
+          pending: {
+            render() {
+              return "Generating form files from server... it may take a while."
+            },
+            icon: false,
+          },
+          error: {
+            render() {
+              return "There's an error in submitting your data, please try again"
+            },
+          },
+        }
+      )
+      setWaitSubmit(false)
+      // TODO: how do I get more meaningful error msg from client-side?
+      if (!res.ok) {
+        toast.error("Error in fetching data from server")
+        return
+      }
+      const data = await res.blob()
+      const objURL = window.URL.createObjectURL(data)
+      window.open(objURL)
+      window.URL.revokeObjectURL(objURL)
+    } catch (e) {
+      // TODO: more descriptive
+      toast.error("Error in executing fetch from server")
+      setWaitSubmit(false)
+    }
+  }
+
   return (
     <Layout>
       <h1>你的身份是：{viewerRole}</h1>
@@ -57,7 +110,18 @@ export default function EventPage() {
       {activeTab == 0 &&
         <main>
           {hasAdminRights(viewerRole) &&
-            <button onClick={() => toggleEditMode(prev => !prev)} className="btn btn-info">編輯模式 {!editMode ? "ON" : "OFF"}</button>}
+            <div>
+              <button onClick={() => toggleEditMode(prev => !prev)} className="btn btn-info">
+                {editMode ? <span className="material-icons">&#xe3c9;</span> : <span className="material-icons">&#xe950;</span>}
+                編輯模式 {editMode ? "ON" : "OFF"}
+              </button>
+              <button onClick={generateFiles} className="btn btn-success">
+                <span className="material-icons">&#xe2c4;</span>
+                生成＆下載文件
+                {waitSubmit &&
+                  <progress className="progress w-50"></progress>}
+              </button>
+            </div>}
           {!eventData && <p>Loading event data...</p>}
           {eventData &&
             <EventRegister readMode={!editMode} userId={session.user.id}
@@ -67,16 +131,40 @@ export default function EventPage() {
         </main>}
       {activeTab == 1 &&
         <main>
-          <AttendanceList memberList={eventData.attendants} viewer={{id: session.user.id, role: viewerRole}} />
+          {hasAdminRights(viewerRole) &&
+            <div>
+              <div className="divider">邀請連結</div>
+              <div className="grid grid-cols-4 justify-items-center">
+                <button className="btn btn-info btn-outline" onClick={() => copyInviteLink("Mentor")}>
+                  <span className="material-icons">&#xE14D;</span>
+                  輔領
+                </button>
+                <button className="btn btn-warning btn-outline" onClick={() => copyInviteLink("Rescue")}>
+                  <span className="material-icons">&#xE14D;</span>
+                  山難
+                </button>
+                <button className="btn btn-error btn-outline" onClick={() => copyInviteLink("Watcher")}>
+                  <span className="material-icons">&#xE14D;</span>
+                  留守
+                </button>
+                <button className="btn btn-outline" onClick={() => copyInviteLink("Member")}>
+                  <span className="material-icons">&#xE14D;</span>
+                  隊員
+                </button>
+              </div>
+            </div>}
+          <div className="divider">成員列表</div>
+          <AttendanceList memberList={eventData.attendants} viewer={{ id: session.user.id, role: viewerRole }} />
         </main>}
     </Layout>
   )
 }
 
-export async function getServerSideProps(context: NextPageContext) {
+export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
     props: {
-      session: await getSession(context),
+      session: await unstable_getServerSession(context.req, context.res, authOptions),
+      backend_url: process.env.BACKEND_URL,
     },
   }
 }

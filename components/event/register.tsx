@@ -1,7 +1,8 @@
 import { SubmitHandler, useFieldArray, useForm } from "react-hook-form"
 import { useRouter } from "next/router"
 import { EquipData, EventData, EventData_API } from "./event-type"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
+import { toast } from "react-toastify"
 
 export const equipBaseList = ["帳棚", "鍋組（含湯瓢、鍋夾）", "爐頭", "Gas", "糧食", "預備糧", "山刀", "鋸子", "路標", "衛星電話", "收音機", "無線電", "傘帶", "Sling", "無鎖鉤環", "急救包", "GPS", "包溫瓶"]
 export const techBaseList = ["主繩", "吊帶", "上升器", "下降器", "岩盔", "有鎖鉤環", "救生衣"]
@@ -17,6 +18,7 @@ interface PropType {
 
 export default function EventRegister({ userId, readMode, eventInfo }: PropType) {
   const router = useRouter()
+  const [waitSubmit, setWaitSubmit] = useState(false)
 
   const { register, control, handleSubmit, watch, formState: { errors } } = !eventInfo ? useForm<EventData>() :
     useForm({
@@ -28,8 +30,9 @@ export default function EventRegister({ userId, readMode, eventInfo }: PropType)
   const techEquipFields = useFieldArray({ name: 'techEquip_add', control })
 
   const onSubmit: SubmitHandler<EventData> = async (data) => {
+    setWaitSubmit(true)
     const apiEndpoint = (eventInfo) ? `/api/event/${eventInfo.eventId}` : `/api/event`
-    const res = await fetch(apiEndpoint, {
+    const submitPromise = fetch(apiEndpoint, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -41,11 +44,29 @@ export default function EventRegister({ userId, readMode, eventInfo }: PropType)
         },
       })
     })
+    const res = await toast.promise(
+      submitPromise,
+      {
+        pending: {
+          render() {
+            return "Submitting data to server..."
+          },
+          icon: false,
+        },
+        error: {
+          render() {
+            return "There's an error in submitting your data, please try again"
+          },
+        },
+      }
+    )
     const res_data = await res.json()
-    alert(res_data.message)
+    setWaitSubmit(false)
     if (res.ok) {
-      alert("Redirecting back to main page...")
+      toast.success(res_data.message)
       router.push("/");
+    } else {
+      toast.error(res_data.message)
     }
   }
 
@@ -157,7 +178,10 @@ export default function EventRegister({ userId, readMode, eventInfo }: PropType)
       <br />
       {!readMode &&
         <div className="tooltip" data-tip="新增自訂一般裝備">
-          <button type="button" onClick={() => { equipFields.append({ name: "", des: "" }) }} className="btn btn-outline">新增（一般）裝備</button>
+          <button type="button" onClick={() => { equipFields.append({ name: "", des: "" }) }} className="btn btn-outline">
+            <span className="material-icons">&#xe145;</span>
+            新增（一般）裝備
+          </button>
         </div>}
       <div className="divider"><h1>技術裝備</h1></div>
       <div className="form-control w-full max-w-s grid grid-cols-3">
@@ -191,11 +215,25 @@ export default function EventRegister({ userId, readMode, eventInfo }: PropType)
       <br />
       {!readMode &&
         <div className="tooltip" data-tip="新增自訂技術裝備">
-          <button type="button" onClick={() => { techEquipFields.append({ name: "", des: "" }) }} className="btn btn-outline">新增技術裝備</button>
+          <button type="button" onClick={() => { techEquipFields.append({ name: "", des: "" }) }} className="btn btn-outline">
+            <span className="material-icons">&#xe145;</span>
+            新增技術裝備
+          </button>
         </div>}
       <br />
       {!readMode &&
-        <button type="submit" className="btn btn-outline btn-success">{!eventInfo && "新增隊伍"}{eventInfo && "更新基本隊伍資訊"}</button>}
+        <button type="submit" className="btn btn-outline btn-success">
+          {!eventInfo && <div>
+            <span className="material-icons">&#xe145;</span>新增隊伍
+            {waitSubmit &&
+              <progress className="progress w-50"></progress>}
+          </div>}
+          {eventInfo && <div>
+            <span className="material-icons">&#xe161;</span>更新基本隊伍資訊
+            {waitSubmit &&
+              <progress className="progress w-50"></progress>}
+          </div>}
+        </button>}
     </form>
   )
 }

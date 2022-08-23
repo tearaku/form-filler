@@ -7,12 +7,37 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  // POST request, event creation only
+  if (req.method == "GET") {
+    // 1. Get valid listings (past events aren't fetched)
+    const eventList = await prisma.event.findMany({
+      where: {
+        endDate: {
+          gte: new Date(),
+        },
+      },
+      include: {
+        attendants: true,
+      },
+      orderBy: {
+        beginDate: 'asc',
+      }
+    })
+    const parsedEventList = eventList.map(event => {
+      return ({
+        ...event,
+        beginDate: event.beginDate.toISOString(),
+        endDate: event.endDate.toISOString(),
+      })
+    })
+    res.status(200).send({ data: parsedEventList, message: "Event listing fetched." })
+    return
+  }
+  // POST request, event creation only, updates are done via another route
   if (req.method == "POST") {
     const userId = req.body.userId
     const formData: EventData = req.body.formData
     const { equip, equip_add, techEquip, techEquip_add, ...eventData } = formData
-    const event = await prisma.event.create({
+    await prisma.event.create({
       data: {
         ...eventData,
         beginDate: new Date(eventData.beginDate),
@@ -32,12 +57,12 @@ export default async function handler(
           },
         }
       }
-    })
-    if (!event) {
+    }).then(() => {
+      res.status(200).send({ message: "Event created!" })
+    }).catch(err => {
+      console.log(err)
       res.status(500).send({ message: "Event creation failed." })
-      return
-    }
-    res.status(200).send({ message: "Event created!" })
+    })
     return
   }
 

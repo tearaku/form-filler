@@ -39,7 +39,7 @@ export default async function handler(
   if (req.method == "POST") {
     const userId = parseInt(req.query.userId as string)
     const formData: ProfileData = req.body.formData
-    const upsertedUser = await prisma.user.update({
+    await prisma.user.update({
       where: {
         id: userId,
       },
@@ -68,7 +68,7 @@ export default async function handler(
               nationalId: formData.nationalId ? formData.nationalId : null,
               engName: formData.engName ? formData.engName : null,
               passportNumber: formData.passportNumber ? formData.passportNumber : null,
-              nationality: formData.nationality ? formData.nationality: null,
+              nationality: formData.nationality ? formData.nationality : null,
               dateOfBirth: new Date(formData.dateOfBirth),
               placeOfBirth: formData.placeOfBirth,
               address: formData.address,
@@ -88,7 +88,7 @@ export default async function handler(
               nationalId: formData.nationalId ? formData.nationalId : null,
               engName: formData.engName ? formData.engName : null,
               passportNumber: formData.passportNumber ? formData.passportNumber : null,
-              nationality: formData.nationality ? formData.nationality: null,
+              nationality: formData.nationality ? formData.nationality : null,
               dateOfBirth: new Date(formData.dateOfBirth),
               placeOfBirth: formData.placeOfBirth,
               address: formData.address,
@@ -103,12 +103,12 @@ export default async function handler(
           }
         }
       }
-    })
-    if (!upsertedUser) {
+    }).then(() => {
+      res.status(200).json({ message: 'Successfully updated / created user profile.' })
+    }).catch(err => {
+      console.log(err)
       res.status(500).json({ message: "Updating / creating new profile failed." })
-      return
-    }
-    res.status(200).json({ message: 'Successfully upserted user profile.' })
+    })
     return
   }
 

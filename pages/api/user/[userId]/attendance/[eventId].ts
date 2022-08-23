@@ -12,16 +12,16 @@ export default async function handler(
     // Kick or update request
     const toKick = req.body.formData.toRemove
     if (toKick) {
-      const attendance = await prisma.attendance.delete({
+      await prisma.attendance.delete({
         where: {
           eventId_userId: {eventId, userId},
         }
-      })
-      if (!attendance) {
+      }).then(() => {
+        res.send({message: "User kick: successful!"})
+      }).catch(err => {
+        console.log(err)
         res.status(500).send({message: "Error: Attendance does not exist."})
-        return
-      }
-      res.send({message: "User kick: successful!"})
+      })
       return
     } else {
       const attendance = await prisma.attendance.update({
@@ -31,12 +31,12 @@ export default async function handler(
         data: {
           ...req.body.formData,
         }
-      })
-      if (!attendance) {
+      }).then(() => {
+        res.status(200).send({ message: "Updating attendance: success!" })
+      }).catch(err => {
+        console.log(err)
         res.status(500).send({ message: "User or event not found." })
-        return
-      }
-      res.status(200).send({ message: "Updating attendance: success!" })
+      })
       return
     }
   }

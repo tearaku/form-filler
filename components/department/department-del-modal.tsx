@@ -1,5 +1,6 @@
 import { Department, MinimalProfile, Profile } from "@prisma/client"
 import { useRouter } from "next/router"
+import { toast } from "react-toastify"
 
 interface PropType {
   deptInfo: Department
@@ -12,11 +13,11 @@ export default function DepartmentModalCard({ deptInfo, name, majorYear, viewerI
   const router = useRouter()
 
   const revokePosition = async () => {
-    if (!viewerIsAdmin) { 
-      alert("只有網管可以更改幹部資料表！")
+    if (!viewerIsAdmin) {
+      toast.error("只有網管可以更改幹部資料表！")
       return
     }
-    const res = await fetch(`/api/department`, {
+    const submitPromise = fetch(`/api/department`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -25,12 +26,28 @@ export default function DepartmentModalCard({ deptInfo, name, majorYear, viewerI
         ...deptInfo
       })
     })
+    const res = await toast.promise(
+      submitPromise,
+      {
+        pending: {
+          render() {
+            return "Submitting data..."
+          },
+          icon: false,
+        },
+        error: {
+          render() {
+            return "There's an error in submitting your data, please try again"
+          },
+        },
+      }
+    )
     if (res.ok) {
-      alert("刪除成功！")
+      toast.success("刪除成功！")
       router.reload()
     } else {
       const errMsg = await res.json()
-      alert("錯誤：" + errMsg.message)
+      toast.error(`錯誤：${errMsg.message}`)
     }
   }
 

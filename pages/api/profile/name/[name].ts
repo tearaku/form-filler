@@ -19,7 +19,6 @@ export default async function handler(
         }
       })
     }))
-    console.log(profileList)
     res.status(200).json({
       minProfileList: minProfileList,
       profileList: profileList,

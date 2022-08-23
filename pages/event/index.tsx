@@ -1,15 +1,21 @@
-import { useSession, getSession } from "next-auth/react"
+import { useSession } from "next-auth/react"
+import { authOptions } from "../api/auth/[...nextauth]"
+import { unstable_getServerSession } from "next-auth/next"
 import Layout from "../../components/layout"
-import type { NextPageContext } from "next"
+import type { GetServerSideProps } from "next"
 import AccessDenied from "../../components/access-denied"
 import Link from "next/link"
 import EventList from "../../components/event/event-list"
-import prisma from "../../utils/prisma"
-import { useEffect } from "react"
+import useSWR from "swr"
 
 export default function Event(props) {
   const { data: session, status } = useSession()
-  const loading = status === "loading"
+
+  const fetcher = (url, date) => fetch(url).then(res => res.json())
+  const { data, error } = useSWR(["/api/event", new Date().toDateString()], fetcher)
+
+  if (error) return <Layout>Failed to load data!</Layout>
+  if (!data) return <Layout>Loading...</Layout>
 
   // If no session exists, display access denied message
   if (!session) {
@@ -28,36 +34,15 @@ export default function Event(props) {
           <a>新增隊伍</a>
         </Link>
       </button>
-      <EventList events={props.events}/>
+      <EventList events={data.data} />
     </Layout>
   )
 }
 
-export async function getServerSideProps(context: NextPageContext) {
-  const eventList = await prisma.event.findMany({
-    where: {
-      endDate: {
-        gte: new Date(),
-      },
-    },
-    include: {
-      attendants: true,
-    },
-    orderBy: {
-      beginDate: 'asc',
-    }
-  })
-  const parsedEventList = eventList.map(target => {
-    return ({
-      ...target,
-      beginDate: target.beginDate.toISOString(),
-      endDate: target.endDate.toISOString(),
-    })
-  })
+export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
     props: {
-      session: await getSession(context),
-      events: parsedEventList,
+      session: await unstable_getServerSession(context.req, context.res, authOptions),
     },
   }
 }

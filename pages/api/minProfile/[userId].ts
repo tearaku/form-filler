@@ -10,7 +10,7 @@ export default async function handler(
   if (req.method == "POST") {
     const userId = parseInt(req.query.userId as string)
     const formData: MinimalProfileData = req.body.formData
-    const minUserProfile = await prisma.minimalProfile.upsert({
+    await prisma.minimalProfile.upsert({
       where: {
         userId: userId,
       },
@@ -27,12 +27,12 @@ export default async function handler(
         mobileNumber: formData.mobileNumber,
         phoneNumber: formData.phoneNumber,
       }
-    })
-    if (!minUserProfile) {
+    }).then(minProfile => {
+      res.status(200).send({ data: minProfile, message: "Updating / creating min profile success!" })
+    }).catch(err => {
+      console.log(err)
       res.status(500).send({ message: "User with given ID is not found." })
-      return
-    }
-    res.status(200).send(minUserProfile)
+    })
     return
   }
 

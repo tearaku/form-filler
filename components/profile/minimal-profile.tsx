@@ -1,6 +1,8 @@
 import { SubmitHandler, useForm } from "react-hook-form"
 import { useRouter } from "next/router"
 import { MinimalProfileData, ProfileData } from "./user-profile-type"
+import { useState } from "react"
+import { toast } from "react-toastify"
 
 interface PropType {
   userData: MinimalProfileData
@@ -10,8 +12,11 @@ interface PropType {
 
 export default function MinimalProfileForm({ userData, userId, readOnly }: PropType) {
   const router = useRouter()
+  const [waitSubmit, setWaitSubmit] = useState(false)
+
   const onSubmit: SubmitHandler<MinimalProfileData> = async (data) => {
-    const res = await fetch(`/api/minProfile/${userId}`, {
+    setWaitSubmit(true);
+    const submitPromise = fetch(`/api/minProfile/${userId}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -20,11 +25,29 @@ export default function MinimalProfileForm({ userData, userId, readOnly }: PropT
         formData: data,
       })
     });
+    const res = await toast.promise(
+      submitPromise,
+      {
+        pending: {
+          render() {
+            return "Submitting data..."
+          },
+          icon: false,
+        },
+        error: {
+          render() {
+            return "There's an error in submitting your data, please try again"
+          },
+        },
+      }
+    )
     const res_data = await res.json();
-    alert(res_data.message);
+    setWaitSubmit(false);
     if (res.ok) {
-      alert("Minimal profile update successful!")
+      toast.success(res_data.message);
       router.push("/");
+    } else {
+      toast.error("Error in updating minimal profile" + res_data.message);
     }
   }
 
@@ -62,7 +85,11 @@ export default function MinimalProfileForm({ userData, userId, readOnly }: PropT
 
           <br />
           {!readOnly &&
-            <button type="submit" className="btn btn-outline btn-success">更新簡短個人資訊</button>}
+            <button type="submit" className="btn btn-outline btn-success">
+              更新簡短個人資訊
+              {waitSubmit &&
+                <progress className="progress w-50"></progress>}
+            </button>}
         </div>
         <div className="form-control w-fit"></div>
       </form>

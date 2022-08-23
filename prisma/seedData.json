@@ -1,0 +1,297 @@
+{
+    "profile": [
+        {
+            "userId": 1,
+            "engName": null,
+            "isMale": true,
+            "isStudent": true,
+            "majorYear": "昆蟲四",
+            "dateOfBirth": "2000-02-04T16:00:00.000Z",
+            "placeOfBirth": "呵呵市",
+            "isTaiwanese": true,
+            "nationalId": "A12345678",
+            "passportNumber": null,
+            "nationality": null,
+            "address": "呵呵地址",
+            "emergencyContactName": "緊急一",
+            "emergencyContactMobile": "0900-000-000",
+            "emergencyContactPhone": "04-0000000",
+            "beneficiaryName": "受益一",
+            "beneficiaryRelation": "母子",
+            "riceAmount": "4",
+            "foodPreference": "喜歡辣"
+        },
+        {
+            "userId": 2,
+            "engName": null,
+            "isMale": false,
+            "isStudent": true,
+            "majorYear": "中文一",
+            "dateOfBirth": "2004-02-04T16:00:00.000Z",
+            "placeOfBirth": "呵呵市",
+            "isTaiwanese": true,
+            "nationalId": "A12345678",
+            "passportNumber": null,
+            "nationality": null,
+            "address": "呵呵地址",
+            "emergencyContactName": "緊急二",
+            "emergencyContactMobile": "0900-000-001",
+            "emergencyContactPhone": "無",
+            "beneficiaryName": "受益二",
+            "beneficiaryRelation": "父女",
+            "riceAmount": "2",
+            "foodPreference": null
+        },
+        {
+            "userId": 3,
+            "engName": "Matthews Brittney",
+            "isMale": true,
+            "isStudent": false,
+            "majorYear": null,
+            "dateOfBirth": "1995-02-04T16:00:00.000Z",
+            "placeOfBirth": "呵呵國",
+            "isTaiwanese": false,
+            "nationalId": null,
+            "passportNumber": "P12345678",
+            "nationality": "香港",
+            "address": "呵呵地址",
+            "emergencyContactName": "緊急三",
+            "emergencyContactMobile": "0900-000-002",
+            "emergencyContactPhone": "04-0000002",
+            "beneficiaryName": "受益三",
+            "beneficiaryRelation": "父子",
+            "riceAmount": "6",
+            "foodPreference": "飯多一點"
+        },
+        {
+            "userId": 4,
+            "engName": "Cole Schriber",
+            "isMale": false,
+            "isStudent": false,
+            "majorYear": null,
+            "dateOfBirth": "1990-02-04T16:00:00.000Z",
+            "placeOfBirth": "呵呵國",
+            "isTaiwanese": false,
+            "nationalId": null,
+            "passportNumber": "P87654321",
+            "nationality": "奧門",
+            "address": "呵呵地址",
+            "emergencyContactName": "緊急四",
+            "emergencyContactMobile": "0900-000-003",
+            "emergencyContactPhone": "04-0000003",
+            "beneficiaryName": "受益四",
+            "beneficiaryRelation": "母女",
+            "riceAmount": "3",
+            "foodPreference": null
+        }
+    ],
+    "minProfile": [
+        {
+            "userId": 1,
+            "name": "一號君",
+            "mobileNumber": "0910-000-000",
+            "phoneNumber": "01-0000000"
+        },
+        {
+            "userId": 2,
+            "name": "二號君",
+            "mobileNumber": "0910-000-001",
+            "phoneNumber": "01-0000001"
+        },
+        {
+            "userId": 3,
+            "name": "三號君",
+            "mobileNumber": "0910-000-002",
+            "phoneNumber": "01-0000002"
+        },
+        {
+            "userId": 4,
+            "name": "四號君",
+            "mobileNumber": "0910-000-003",
+            "phoneNumber": "01-0000003"
+        },
+        {
+            "userId": 5,
+            "name": "半號一君",
+            "mobileNumber": "0910-000-004",
+            "phoneNumber": "01-0000004"
+        },
+        {
+            "userId": 6,
+            "name": "半號二君",
+            "mobileNumber": "0910-000-005",
+            "phoneNumber": "01-0000005"
+        },
+        {
+            "userId": 7,
+            "name": "半號三君",
+            "mobileNumber": "0910-000-006",
+            "phoneNumber": "01-0000006"
+        }
+    ],
+    "event": [
+        {
+            "id": 1,
+            "inviteToken": "zVztX7II4eJi9b0OrV5Zj",
+            "title": "Event #1",
+            "beginDate": "2022-08-23T08:00:00.000Z",
+            "endDate": "2022-08-28T08:00:00.000Z",
+            "location": "Taipei",
+            "category": "B勘",
+            "groupCategory": "天狼",
+            "drivers": "司機一號、司機二號",
+            "driversNumber": "0900-111-111, 0900-111-112",
+            "radioFreq": "145.20 Mhz",
+            "radioCodename": "浩浩",
+            "tripOverview": "D0 wwwwwww\nD1 oooooooo\nD2 zzzzzzzzz\nD3 qqqqqq",
+            "rescueTime": "D5 1800",
+            "retreatPlan": "C3 沒過ＯＯＸＸ，原路哈哈哈",
+            "mapCoordSystem": "TWD97 上河",
+            "records": "[0] ooxx/oo/xx wwoowwoo\n[1] ooxx/xx/oo oxoxoxoxox\n",
+            "equipList": [
+                "帳棚",
+                "鍋組（含湯瓢、鍋夾）",
+                "爐頭",
+                "Gas",
+                "糧食",
+                "預備糧",
+                "山刀",
+                "鋸子",
+                "路標",
+                "衛星電話",
+                "收音機",
+                "無線電",
+                "傘帶",
+                "Sling",
+                "無鎖鉤環",
+                "急救包",
+                "GPS",
+                "包溫瓶",
+                "ooxx",
+                "xxoo",
+                "ooxx",
+                "xxoo",
+                "ooxx",
+                "xxoo"
+            ],
+            "equipDes": [
+                "1x",
+                "1x",
+                "1x",
+                "1x",
+                "1x",
+                "1x",
+                "1x",
+                "1x",
+                "1x",
+                "1x",
+                "1x",
+                "1x",
+                "1x",
+                "1x",
+                "1x",
+                "1x",
+                "1x",
+                "1x",
+                "1x",
+                "1x",
+                "1x",
+                "1x",
+                "1x",
+                "1x"
+            ],
+            "techEquipList": [
+                "主繩",
+                "吊帶",
+                "上升器",
+                "下降器",
+                "岩盔",
+                "有鎖鉤環",
+                "救生衣",
+                "ooxx",
+                "ooxx",
+                "oxxo",
+                "oxox"
+            ],
+            "techEquipDes": [
+                "1x",
+                "2x",
+                "2x",
+                "2x",
+                "2x",
+                "4x",
+                "4x",
+                "1x",
+                "1x",
+                "1x",
+                "1x"
+            ],
+            "attendants": [
+                {
+                    "eventId": 1,
+                    "userId": 1,
+                    "role": "Host",
+                    "jobs": "領隊、證保"
+                },
+                {
+                    "eventId": 1,
+                    "userId": 2,
+                    "role": "Mentor",
+                    "jobs": "輔隊"
+                },
+                {
+                    "eventId": 1,
+                    "userId": 3,
+                    "role": "Member",
+                    "jobs": "大廚、裝備、學員"
+                },
+                {
+                    "eventId": 1,
+                    "userId": 4,
+                    "role": "Member",
+                    "jobs": null
+                },
+                {
+                    "eventId": 1,
+                    "userId": 5,
+                    "role": "Rescue",
+                    "jobs": null
+                },
+                {
+                    "eventId": 1,
+                    "userId": 6,
+                    "role": "Watcher",
+                    "jobs": null
+                },
+                {
+                    "eventId": 1,
+                    "userId": 7,
+                    "role": "Watcher",
+                    "jobs": null
+                }
+            ]
+        }
+    ],
+    "department": [
+        {
+            "userId": 1,
+            "description": "社長"
+        },
+        {
+            "userId": 2,
+            "description": "嚮導部長1"
+        },
+        {
+            "userId": 3,
+            "description": "嚮導部長2"
+        },
+        {
+            "userId": 4,
+            "description": "社產組長"
+        },
+        {
+            "userId": 5,
+            "description": "山難部長"
+        }
+    ]
+}

@@ -2,6 +2,7 @@ import { Attendance, MinimalProfile, Profile } from "@prisma/client"
 import { useRouter } from "next/router"
 import { useState } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
+import { toast } from "react-toastify"
 import { hasAdminRights, parseProfileData } from "../../utils/api-parse"
 import MinimalProfileForm from "../profile/minimal-profile"
 import UserProfileForm from "../profile/profile-form"
@@ -22,6 +23,7 @@ type FormData = {
 
 export default function AttendanceModalCard({ profile, minProfile, viewer, attendance }: PropType) {
   const router = useRouter()
+  const [waitSubmit, setWaitSubmit] = useState(false)
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
     defaultValues: {
       attendance: attendance,
@@ -30,7 +32,8 @@ export default function AttendanceModalCard({ profile, minProfile, viewer, atten
 
   const [confirmDelete, setConfirmDelete] = useState(false)
   async function kickMember() {
-    const res = await fetch(`/api/user/${attendance.userId}/attendance/${attendance.eventId}`, {
+    setWaitSubmit(true)
+    const submitPromise = fetch(`/api/user/${attendance.userId}/attendance/${attendance.eventId}`, {
       method: 'POST',
       headers: {
         "Content-Type": "application/json",
@@ -42,13 +45,31 @@ export default function AttendanceModalCard({ profile, minProfile, viewer, atten
         },
       }),
     })
+    const res = await toast.promise(
+      submitPromise,
+      {
+        pending: {
+          render() {
+            return "Submitting data..."
+          },
+          icon: false,
+        },
+        error: {
+          render() {
+            return "There's an error in submitting your data, please try again"
+          },
+        },
+      }
+    )
     const resData = await res.json()
-    alert(resData.message)
+    setWaitSubmit(false)
+    toast.info(resData.message)
     router.push("/event")
   }
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
-    const res = await fetch(`/api/user/${data.attendance.userId}/attendance/${data.attendance.eventId}`, {
+    setWaitSubmit(true)
+    const submitPromise = fetch(`/api/user/${data.attendance.userId}/attendance/${data.attendance.eventId}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -59,8 +80,25 @@ export default function AttendanceModalCard({ profile, minProfile, viewer, atten
         }
       })
     })
+    const res = await toast.promise(
+      submitPromise,
+      {
+        pending: {
+          render() {
+            return "Submitting data..."
+          },
+          icon: false,
+        },
+        error: {
+          render() {
+            return "There's an error in submitting your data, please try again"
+          },
+        },
+      }
+    )
     const resData = await res.json()
-    alert(resData.message)
+    setWaitSubmit(false)
+    toast.info(resData.message)
     router.push("/event")
   }
 
@@ -89,7 +127,12 @@ export default function AttendanceModalCard({ profile, minProfile, viewer, atten
             <input {...register("attendance.eventId")} type="number" hidden={true} />
             <input {...register("attendance.userId")} type="number" hidden={true} />
           </div>
-          <button type="submit" className="btn btn-success btn-block">更新隊員資訊</button>
+          <button type="submit" className="btn btn-success btn-block">
+            <span className="material-icons">&#xe161;</span>
+            更新隊員資訊
+            {waitSubmit &&
+              <progress className="progress w-100"></progress>}
+          </button>
         </form>
         {editable(viewer, minProfile, true) &&
           <div>

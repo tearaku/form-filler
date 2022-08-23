@@ -1,13 +1,14 @@
-import { useSession, getSession } from "next-auth/react"
+import { useSession } from "next-auth/react"
+import { authOptions } from "../../../api/auth/[...nextauth]"
+import { unstable_getServerSession } from "next-auth/next"
 import Layout from "../../../../components/layout"
-import type { NextPageContext } from "next"
+import type { GetServerSideProps } from "next"
 import AccessDenied from "../../../../components/access-denied"
-import { useEffect } from "react"
 import prisma from "../../../../utils/prisma"
 import { useRouter } from "next/router"
-import { EventData_API } from "../../../../components/event/event-type"
-import { PrismaClient, EventRole } from "@prisma/client"
+import { EventRole } from "@prisma/client"
 import { mapEventRoleEnum, parseDateString } from "../../../../utils/api-parse"
+import { toast } from "react-toastify"
 
 interface PropType {
   valid: boolean,
@@ -21,12 +22,11 @@ interface PropType {
 
 export default function JoinEvent(props: PropType) {
   const { data: session, status } = useSession()
-  const loading = status === "loading"
   const router = useRouter()
 
   const joinSuccess = async (eventId, userId, joinRole) => {
     // TODO: managing failed requests... (more specific failure messages)
-    const res = await fetch(`/api/event/${eventId}/join`, {
+    const submitPromise = fetch(`/api/event/${eventId}/join`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -36,13 +36,29 @@ export default function JoinEvent(props: PropType) {
         role: joinRole,
       })
     })
+    const res = await toast.promise(
+      submitPromise,
+      {
+        pending: {
+          render() {
+            return "Submitting data to server..."
+          },
+          icon: false,
+        },
+        error: {
+          render() {
+            return "There's an error in submitting your data, please try again"
+          },
+        },
+      }
+    )
     const resData = await res.json()
-    if (!res.ok) {
-      alert(`Error: ${resData.message}`)
-      return
+    if (res.ok) {
+      toast.success(resData.message)
+      router.push("/event")
+    } else {
+      toast.error(`Error: ${resData.message}`)
     }
-    alert(resData.message)
-    router.push("/event")
   }
 
   // If no session exists, display access denied message
@@ -54,10 +70,6 @@ export default function JoinEvent(props: PropType) {
       </Layout>
     )
   }
-
-  useEffect(() => {
-    console.log(props)
-  })
 
   return (
     <Layout>
@@ -78,7 +90,7 @@ export default function JoinEvent(props: PropType) {
   )
 }
 
-export async function getServerSideProps(context: NextPageContext) {
+export const getServerSideProps: GetServerSideProps = async (context) => {
   // Default to "member" role if not specified
   let response = {
     valid: true,
@@ -93,7 +105,7 @@ export async function getServerSideProps(context: NextPageContext) {
     response.valid = false
     return {
       props: {
-        session: await getSession(context),
+        session: await unstable_getServerSession(context.req, context.res, authOptions),
         ...response
       },
     }
@@ -111,11 +123,10 @@ export async function getServerSideProps(context: NextPageContext) {
     response.data.endDate = parseDateString(event.endDate.toISOString())
     response.data.eventName = event.title
     response.valid = context.query.inviteToken == event.inviteToken
-    console.log(event.inviteToken)
   }
   return {
     props: {
-      session: await getSession(context),
+      session: await unstable_getServerSession(context.req, context.res, authOptions),
       ...response
     },
   }

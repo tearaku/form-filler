@@ -6,17 +6,16 @@ export default async function handler(
   res: NextApiResponse
 ) {
   if (req.method == "PUT") {
-    console.log(req.body)
     const userId = parseInt(req.body.userId as string)
     const description = req.body.description as string
-    try {
-      await prisma.department.create({
-        data: {
-          user: { connect: { id: userId } },
-          description: description
-        }
-      })
-    } catch (e) {
+    await prisma.department.create({
+      data: {
+        user: { connect: { id: userId } },
+        description: description
+      }
+    }).then(() => {
+      res.status(200).json({ message: "Create committee membership: successful." })
+    }).catch(e => {
       console.log(e)
       if (e instanceof Prisma.PrismaClientKnownRequestError) {
         if (e.code == 'P2002') {
@@ -34,28 +33,23 @@ export default async function handler(
         }
       }
       res.status(500).json({ message: "Something ain't right, call the admin xdd." })
-      return
-    }
-
-    res.status(200).json({ message: "Create committee membership: successful." })
+    })
     return
   }
 
   if (req.method == "DELETE") {
     const userId = parseInt(req.body.userId as string)
     const description = req.body.description as string
-    const deptInfo = await prisma.department.delete({
+    await prisma.department.delete({
       where: {
         userId_description: { userId, description },
       }
-    })
-
-    if (!deptInfo) {
+    }).then(() => {
+      res.status(200).json({ message: "Removal of committee member: successful!" })
+    }).catch(err => {
+      console.log(err)
       res.status(500).json({ message: "Error in deleting the given committee member." })
-      return
-    }
-
-    res.status(200).json({ message: "Removal of committee member: successful!" })
+    })
     return
   }
 

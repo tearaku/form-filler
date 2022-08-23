@@ -1,6 +1,8 @@
-import { useSession, getSession } from "next-auth/react"
+import { authOptions } from "../api/auth/[...nextauth]"
+import { unstable_getServerSession } from "next-auth/next"
+import { useSession } from "next-auth/react"
 import Layout from "../../components/layout"
-import type { NextPageContext } from "next"
+import type { GetServerSideProps } from "next"
 import AccessDenied from "../../components/access-denied"
 import { useEffect } from "react"
 import EventRegister from "../../components/event/register"
@@ -18,10 +20,6 @@ export default function CreateEvent(props) {
     )
   }
 
-  useEffect(() => {
-    console.log(props)
-  })
-
   return (
     <Layout>
       <h1>新增隊伍</h1>
@@ -30,10 +28,10 @@ export default function CreateEvent(props) {
   )
 }
 
-export async function getServerSideProps(context: NextPageContext) {
+export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
     props: {
-      session: await getSession(context),
+      session: await unstable_getServerSession(context.req, context.res, authOptions),
     },
   }
 }

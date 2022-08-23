@@ -1,5 +1,7 @@
 import { useRouter } from "next/router"
+import { useState } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
+import { toast } from "react-toastify"
 
 interface PropType {
   userInfo: {
@@ -19,10 +21,11 @@ interface FormData {
 export default function DepartmentAddQuery({ userInfo }: PropType) {
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>()
   const router = useRouter()
+  const [waitSubmit, setWaitSubmit] = useState(false)
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
-    console.log("Submitted data: ", data)
-    const res = await fetch("/api/department", {
+    setWaitSubmit(true)
+    const submitPromise = fetch("/api/department", {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -32,12 +35,29 @@ export default function DepartmentAddQuery({ userInfo }: PropType) {
         description: data.assignedDept,
       })
     })
+    const res = await toast.promise(
+      submitPromise,
+      {
+        pending: {
+          render() {
+            return "Submitting data..."
+          },
+          icon: false,
+        },
+        error: {
+          render() {
+            return "There's an error in submitting your data, please try again"
+          },
+        },
+      }
+    )
+    setWaitSubmit(false)
     if (!res.ok) {
       const resData = await res.json()
-      alert("錯誤：" + resData.message)
+      toast.error(`錯誤： ${resData.message}`)
       return
     }
-    alert("幹部新增成功！")
+    toast.success("幹部新增成功！")
     router.reload()
   }
 
@@ -64,7 +84,11 @@ export default function DepartmentAddQuery({ userInfo }: PropType) {
               {errors.assignedDept && <p style={{ color: 'red' }}>請填職位名稱！</p>}
             </div> <br />
             <input {...register("userId", { required: true })} type="number" defaultValue={userInfo.userId} hidden={true} />
-            <button type="submit" className="btn btn-outline btn-success">確認</button>
+            <button type="submit" className="btn btn-outline btn-success">
+              確認
+              {waitSubmit &&
+                <progress className="progress w-50"></progress>}
+            </button>
           </form>
           <div className="modal-action">
             <a href="#" className="btn">Close</a>

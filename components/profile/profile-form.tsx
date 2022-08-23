@@ -1,6 +1,8 @@
 import { SubmitHandler, useForm } from "react-hook-form"
 import { useRouter } from "next/router"
 import { MinimalProfileData, ProfileData } from "./user-profile-type"
+import { useState } from "react"
+import { toast } from "react-toastify"
 
 interface PropType {
   userData: {
@@ -14,9 +16,11 @@ interface PropType {
 
 export default function UserProfileForm({ userData, userId, readOnly }: PropType) {
   const router = useRouter()
+  const [waitSubmit, setWaitSubmit] = useState(false)
 
   const onSubmit: SubmitHandler<ProfileData> = async (data) => {
-    const res = await fetch(`/api/profile/${userId}`, {
+    setWaitSubmit(true);
+    const submitPromise = fetch(`/api/profile/${userId}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -25,11 +29,29 @@ export default function UserProfileForm({ userData, userId, readOnly }: PropType
         formData: data,
       })
     });
+    const res = await toast.promise(
+      submitPromise,
+      {
+        pending: {
+          render() {
+            return "Submitting data..."
+          },
+          icon: false,
+        },
+        error: {
+          render() {
+            return "There's an error in submitting your data, please try again"
+          },
+        },
+      }
+    )
     const res_data = await res.json();
-    alert(res_data.message);
+    setWaitSubmit(false);
     if (res.ok) {
-      alert("Profile update successful!")
+      toast.success(res_data.message);
       router.push("/");
+    } else {
+      toast.error(res_data.message);
     }
   }
 
@@ -183,7 +205,11 @@ export default function UserProfileForm({ userData, userId, readOnly }: PropType
 
         <br />
         {!readOnly &&
-          <button type="submit" className="btn btn-outline btn-success">更新個人資訊</button>}
+          <button type="submit" className="btn btn-outline btn-success">
+            更新個人資訊
+            {waitSubmit &&
+              <progress className="progress w-50"></progress>}
+          </button>}
       </div>
       <div className="form-control w-fit"></div>
     </form>

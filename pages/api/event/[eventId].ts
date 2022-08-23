@@ -12,7 +12,7 @@ export default async function handler(
     const eventId = parseInt(req.query.eventId as string)
     const formData: EventData = req.body.formData
     const { equip, equip_add, techEquip, techEquip_add, ...eventData } = formData
-    const event = await prisma.event.update({
+    await prisma.event.update({
       where: {
         id: eventId,
       },
@@ -25,12 +25,12 @@ export default async function handler(
         techEquipList: [...techEquip.map(value => value.name), ...techEquip_add.map(value => value.name)],
         techEquipDes: [...techEquip.map(value => value.des), ...techEquip_add.map(value => value.des)],
       }
-    })
-    if (!event) {
+    }).then(() => {
+      res.status(200).send({ message: "Event basic info: updated!" })
+    }).catch(err => {
+      console.log(err)
       res.status(500).send({ message: "Updating event basic info: failed." })
-      return
-    }
-    res.status(200).send({ message: "Event basic info: updated!" })
+    })
     return
   }
 

@@ -31,7 +31,10 @@ export default function AttendanceRow({ memberInfo, index, viewer }: PropType) {
             </div>
           </div>
           <div>
-            <a href={`#user_${memberInfo.userId}`} className="btn btn-sm btn-outline font-bold">{(resProfile.data.minProfile as MinimalProfile).name}</a>
+            <a href={`#user_${memberInfo.userId}`} className="btn btn-sm btn-outline font-bold">
+              {(resProfile.data.minProfile as MinimalProfile).name}
+              <span className="material-icons">&#xe89e;</span>
+            </a>
             <div className="text-sm opacity-70">FB：{resUser.data.name}</div>
           </div>
         </div>

@@ -1,6 +1,8 @@
-import { useSession, getSession } from "next-auth/react"
+import { useSession } from "next-auth/react"
+import { authOptions } from "../pages/api/auth/[...nextauth]"
+import { unstable_getServerSession } from "next-auth/next"
 import Layout from "../components/layout"
-import type { NextPageContext } from "next"
+import type { GetServerSideProps } from "next"
 import AccessDenied from "../components/access-denied"
 import { useEffect, useState } from "react"
 import MinimalProfileForm from "../components/profile/minimal-profile"
@@ -25,18 +27,20 @@ export default function ProfilePage(props) {
   const fetcher = url => fetch(url).then(res => res.json())
   const { data, error } = useSWR(`/api/profile/${session.user.id}`, fetcher)
 
-  useEffect(() => {
-    console.log(data)
-  }, [data])
-
   if (!data) return <Layout><h1>Loading profile...</h1></Layout>
 
   return (
     <Layout>
-      <h1>個人資料</h1>
+      <div className="divider">
+        <h1>個人資料</h1>
+      </div>
+      <div className="divider">
+        {!altProfile && <p>【一慣作業資料】</p>}
+        {altProfile && <p>【簡易資料】</p>}
+      </div>
       <button className="btn btn-accent" onClick={() => setAltProfile(toggle => !toggle)}>
-        {!altProfile && <p> 我是留守/山難 || 簡易資料</p>}
-        {altProfile && <p> 我是出隊隊員 || 一慣作業資料</p>}
+        {!altProfile && <p> 我是留守／山難【簡易資料】</p>}
+        {altProfile && <p> 我是出隊隊員【一慣作業資料】</p>}
       </button>
       <article>註：若剛更新資料且未看到網頁，請稍先後片刻！</article>
       {!altProfile &&
@@ -49,10 +53,10 @@ export default function ProfilePage(props) {
   )
 }
 
-export async function getServerSideProps(context: NextPageContext) {
+export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
     props: {
-      session: await getSession(context),
+      session: await unstable_getServerSession(context.req, context.res, authOptions),
     },
   }
 }
