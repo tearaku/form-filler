@@ -25,7 +25,7 @@ export default function DepartmentAddQuery({ userInfo }: PropType) {
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     setWaitSubmit(true)
-    const submitPromise = fetch("/api/department", {
+    const submitPromise = fetch(`/api/department`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

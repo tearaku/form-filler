@@ -13,7 +13,7 @@ import Layout from "../../components/layout"
 import { parseDateString, hasAdminRights } from "../../utils/api-parse"
 import { toast } from "react-toastify"
 
-export default function EventPage({ backend_url }) {
+export default function EventPage() {
   const { data: session, status } = useSession()
   const [viewerRole, setViewerRole] = useState("visitor")
   const [eventData, setEventData] = useState<EventData_API>()
@@ -27,10 +27,7 @@ export default function EventPage({ backend_url }) {
   const { data, error } = useSWR(`/api/event/${router.query.eventId}`, fetcher)
 
   useEffect(() => {
-    if (!data) {
-      return
-    }
-
+    if (!data) { return }
     setEventData({
       ...data.data,
       beginDate: parseDateString((data.data as EventData_API).beginDate as string),
@@ -39,9 +36,7 @@ export default function EventPage({ backend_url }) {
   }, [data])
 
   useEffect(() => {
-    if (!eventData) {
-      return
-    }
+    if (!eventData) { return }
     const viewer = eventData.attendants.find(member => {
       return (member.userId == session.user.id)
     })
@@ -63,9 +58,7 @@ export default function EventPage({ backend_url }) {
   const generateFiles = async () => {
     try {
       setWaitSubmit(true)
-      const submitPromise = fetch(`${backend_url}/event/${router.query.eventId}`, {
-        method: "GET",
-      })
+      const submitPromise = fetch(`/api/event/${router.query.eventId}/gen`)
       const res = await toast.promise(
         submitPromise,
         {
@@ -88,13 +81,13 @@ export default function EventPage({ backend_url }) {
         toast.error("Error in fetching data from server")
         return
       }
-      const data = await res.blob()
-      const objURL = window.URL.createObjectURL(data)
+      const fBlob = await res.blob()
+      const objURL = window.URL.createObjectURL(fBlob)
       window.open(objURL)
       window.URL.revokeObjectURL(objURL)
     } catch (e) {
       // TODO: more descriptive
-      toast.error("Error in executing fetch from server")
+      toast.error(`Error: ${e}`)
       setWaitSubmit(false)
     }
   }
@@ -164,7 +157,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
     props: {
       session: await unstable_getServerSession(context.req, context.res, authOptions),
-      backend_url: process.env.BACKEND_URL,
     },
   }
 }

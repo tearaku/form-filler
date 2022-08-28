@@ -9,6 +9,36 @@ import MinimalProfileForm from "../components/profile/minimal-profile"
 import useSWR from "swr"
 import UserProfileForm from "../components/profile/profile-form"
 import { parseProfileData } from "../utils/api-parse"
+import { ProfileRes, MinProfileRes } from '../types/resources'
+import { minProfileFetcher, profileFetcher } from "../utils/fetcher"
+
+const seekProfile: ProfileRes = {
+  UserId: true,
+  EngName: true,
+  IsMale: true,
+  IsStudent: true,
+  MajorYear: true,
+  DateOfBirth: true,
+  PlaceOfBirth: true,
+  IsTaiwanese: true,
+  NationalId: true,
+  Nationality: true,
+  PassportNumber: true,
+  Address: true,
+  EmergencyContactName: true,
+  EmergencyContactPhone: true,
+  EmergencyContactMobile: true,
+  BeneficiaryName: true,
+  BeneficiaryRelation: true,
+  RiceAmount: true,
+  FoodPreference: true,
+}
+const seekMinProfile: MinProfileRes = {
+  UserId: true,
+  Name: true,
+  MobileNumber: true,
+  PhoneNumber: true,
+}
 
 export default function ProfilePage(props) {
   const { data: session, status } = useSession()
@@ -24,10 +54,15 @@ export default function ProfilePage(props) {
 
   const [altProfile, setAltProfile] = useState(false)
 
-  const fetcher = url => fetch(url).then(res => res.json())
-  const { data, error } = useSWR(`/api/profile/${session.user.id}`, fetcher)
+  const { data: resProfile, error: resProfileErr } = useSWR(
+    [`/api/profile/${session.user.id}`, seekProfile],
+    profileFetcher)
+  const { data: resMProfile, error: resMProfileErr } = useSWR(
+    [`/api/minProfile/${session.user.id}`, seekMinProfile],
+    minProfileFetcher)
 
-  if (!data) return <Layout><h1>Loading profile...</h1></Layout>
+  if (!resProfile || !resMProfile) return <Layout><h1>Loading profile...</h1></Layout>
+  if (resProfileErr || resMProfileErr) return <Layout><h1>Error in loading user data!</h1></Layout>
 
   return (
     <Layout>
@@ -42,12 +77,12 @@ export default function ProfilePage(props) {
         {!altProfile && <p> 我是留守／山難【簡易資料】</p>}
         {altProfile && <p> 我是出隊隊員【一慣作業資料】</p>}
       </button>
-      <article>註：若剛更新資料且未看到網頁，請稍先後片刻！</article>
+      <article>註：若剛更新資料且未看到網頁更新，請稍先後片刻！</article>
       {!altProfile &&
-        <UserProfileForm userData={parseProfileData(data.data)} userId={session.user.id} readOnly={false} />
+        <UserProfileForm userData={parseProfileData(resProfile.data, resMProfile.data)} readOnly={false} />
       }
       {altProfile &&
-        <MinimalProfileForm userData={parseProfileData(data.data).minProfile} userId={session.user.id} readOnly={false} />
+        <MinimalProfileForm userData={resMProfile.data} readOnly={false} />
       }
     </Layout>
   )

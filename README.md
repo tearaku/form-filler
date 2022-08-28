@@ -1,17 +1,18 @@
 # 簡易公文自動生產機
-## Objectives / Roadmap
-Quick checklist of things to be done, more will be added later
-- [x] User profile page
-    - [] Refactor: use spread syntax for fields that do not require post-processing (code looks nicer that way XD)
-- [] API Routes
-    - [] Error handling in DB accesses: website shouldn't die from an error!
-        - EX: see "/api/department/index.ts" for example
-    - [] Refactor: standardize responses -> to contain data (if any) & message for frontend to display status (success / error / etc.)
-- [x] Event creation
-    - [] Minor issue: field arrays -> requires multiple submit-clicks before they're registered as "inputted"
-- [x] Event registration (as non-hosts)
-- [] Pull department info into a separate page
-    - [] Club leader should be able to transfer its position to someone else (via email? show that on header bar)
-- [] Conforming to FB login requirement (deleting all user info on request)
-    - [] Cascading deletes on all info linked to Account
-- [] Add FAQ / help instructions (on ALL pages!)
+## How to run
+
+Fill the values in the `.env.example` and rename it to `.env`
+
+Note: shadow database is not necessary if your database allows you to drop tables (ex: Heroku's postgres can't, hence the need for it), see [this](https://www.prisma.io/docs/concepts/components/prisma-migrate/shadow-database#cloud-hosted-shadow-databases-must-be-created-manually) prisma doc for details
+
+```bash
+yarn install
+```
+
+Then do
+
+```bash
+yarn dev
+```
+
+The website is now running on `localhost:3000`

@@ -1,12 +1,19 @@
 import { nanoid } from 'nanoid'
 import type { NextApiRequest, NextApiResponse } from 'next'
+import { unstable_getServerSession } from 'next-auth'
 import { EventData } from '../../../components/event/event-type'
 import prisma from '../../../utils/prisma'
+import { authOptions } from '../auth/[...nextauth]'
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  const session = await unstable_getServerSession(req, res, authOptions)
+  if (!session) {
+    res.status(401).send({ message: "Unauthorized" })
+    return
+  }
   if (req.method == "GET") {
     // 1. Get valid listings (past events aren't fetched)
     const eventList = await prisma.event.findMany({
@@ -32,7 +39,8 @@ export default async function handler(
     res.status(200).send({ data: parsedEventList, message: "Event listing fetched." })
     return
   }
-  // POST request, event creation only, updates are done via another route
+
+  // POST request for event creation only, updates are done via another route
   if (req.method == "POST") {
     const userId = req.body.userId
     const formData: EventData = req.body.formData

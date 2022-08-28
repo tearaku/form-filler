@@ -10,23 +10,23 @@ interface PropType {
     profile: ProfileData
     minProfile: MinimalProfileData
   }
-  userId: number
   readOnly: boolean
 }
 
-export default function UserProfileForm({ userData, userId, readOnly }: PropType) {
+export default function UserProfileForm({ userData, readOnly }: PropType) {
   const router = useRouter()
   const [waitSubmit, setWaitSubmit] = useState(false)
 
   const onSubmit: SubmitHandler<ProfileData> = async (data) => {
     setWaitSubmit(true);
-    const submitPromise = fetch(`/api/profile/${userId}`, {
+    const submitPromise = fetch(`/api/profile/${userData.profile.userId}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
         formData: data,
+        method: "UPDATE",
       })
     });
     const res = await toast.promise(

@@ -10,14 +10,9 @@ import useSWR from "swr"
 
 export default function Event(props) {
   const { data: session, status } = useSession()
-
   const fetcher = (url, date) => fetch(url).then(res => res.json())
-  const { data, error } = useSWR(["/api/event", new Date().toDateString()], fetcher)
+  const { data, error } = useSWR([`/api/event`, new Date().toDateString()], fetcher)
 
-  if (error) return <Layout>Failed to load data!</Layout>
-  if (!data) return <Layout>Loading...</Layout>
-
-  // If no session exists, display access denied message
   if (!session) {
     return (
       <Layout>
@@ -25,6 +20,9 @@ export default function Event(props) {
       </Layout>
     )
   }
+
+  if (error) return <Layout>Failed to load data!</Layout>
+  if (!data) return <Layout>Loading...</Layout>
 
   return (
     <Layout>

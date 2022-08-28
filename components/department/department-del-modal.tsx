@@ -1,4 +1,4 @@
-import { Department, MinimalProfile, Profile } from "@prisma/client"
+import { Department } from "@prisma/client"
 import { useRouter } from "next/router"
 import { toast } from "react-toastify"
 

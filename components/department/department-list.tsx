@@ -21,7 +21,7 @@ export default function DepartmentList({ deptInfo, viewerIsAdmin }: PropType) {
         </thead>
         <tbody>
           {deptInfo.map((member, index) => {
-            return (<DepartmentRow deptInfo={member} rowIdx={index} viewerIsAdmin={viewerIsAdmin} />)
+            return (<DepartmentRow deptInfo={member} viewerIsAdmin={viewerIsAdmin} key={`member_${index}`} />)
           })}
         </tbody>
       </table>

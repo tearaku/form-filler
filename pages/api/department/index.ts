@@ -1,10 +1,43 @@
 import { Prisma } from "@prisma/client";
 import { NextApiRequest, NextApiResponse } from "next";
+import { unstable_getServerSession } from 'next-auth'
+import { RESOURCE, userHasEditRights } from "../../../utils/auth-check";
+import { authOptions } from '../auth/[...nextauth]'
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  const session = await unstable_getServerSession(req, res, authOptions)
+  if (!session) {
+    res.status(401).send({ message: "Invalid request" })
+    return
+  }
+
+  // Ok to access by all
+  if (req.method == "GET") {
+    // Default: fetches all members; add support for spot-retrieval?
+    await prisma.department.findMany({
+    }).then(deptTable => {
+      res.status(200).send({ data: deptTable, message: "All committee members retrived." })
+    }).catch(err => {
+      console.log(err)
+      res.status(500).send({ message: "Error in fetching committee member data." })
+    })
+    return
+  }
+
+  const validReq = await userHasEditRights({
+    resource: RESOURCE.Department,
+    payload: {
+      userId: session.user.id,
+    }
+  })
+  if (!validReq) {
+    res.status(403).send({ message: "Invalid request" })
+    return
+  }
+
   if (req.method == "PUT") {
     const userId = parseInt(req.body.userId as string)
     const description = req.body.description as string

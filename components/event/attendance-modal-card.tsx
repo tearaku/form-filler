@@ -102,15 +102,17 @@ export default function AttendanceModalCard({ profile, minProfile, viewer, atten
     router.push("/event")
   }
 
+  if (!hasAdminRights(viewer.role)) return <></>
+
   return (
     <div className="modal" id={`user_${minProfile.userId}`}> <div className="modal-box">
       <h3 className="font-bold text-lg items-center">{minProfile.name}</h3>
       <div className="divider">成員資料</div>
       {hasAdminRights(viewer.role) && <>
         {!profile &&
-          <MinimalProfileForm userId={minProfile.userId} userData={parseProfileData({ profile: null, minProfile: minProfile }).minProfile} readOnly={true} />}
+          <MinimalProfileForm userData={minProfile} readOnly={true} />}
         {profile &&
-          <UserProfileForm readOnly={true} userId={minProfile.userId} userData={parseProfileData({ profile: profile as any, minProfile: minProfile })} />}
+          <UserProfileForm userData={parseProfileData(profile, minProfile)} readOnly={true} />}
         <div className="divider">成員身份</div>
         <form onSubmit={handleSubmit(onSubmit)} className="form-control">
           <div className="grid grid-cols-2">
@@ -141,7 +143,6 @@ export default function AttendanceModalCard({ profile, minProfile, viewer, atten
               <button onClick={kickMember} className="btn btn-error btn-block">Submit kick request</button>}
           </div>}
       </>}
-      {!hasAdminRights(viewer.role) && <p>只有領隊／輔領隊才能看資料！</p>}
       <div className="modal-action">
         <a href="#" className="btn">Close</a>
       </div>

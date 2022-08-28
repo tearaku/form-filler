@@ -16,7 +16,7 @@ export default function EventList(props) {
         </thead>
         <tbody>
           {props.events.map((curEvent) => {
-            return (<EventRow eventData={curEvent} />)
+            return (<EventRow eventData={curEvent} key={`event_${curEvent.id}`} />)
           })}
         </tbody>
       </table>

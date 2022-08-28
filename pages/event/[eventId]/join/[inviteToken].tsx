@@ -34,6 +34,7 @@ export default function JoinEvent(props: PropType) {
       body: JSON.stringify({
         userId: userId,
         role: joinRole,
+        inviteToken: router.query.inviteToken,
       })
     })
     const res = await toast.promise(
@@ -101,6 +102,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       role: ("role" in context.query) ? context.query.role as string : "Member",
     }
   }
+  // Disallow joining as Host (since I'm using inputs from URL xdd)
   if (!Object.keys(EventRole).some(value => (value == response.data.role) && (value != EventRole.Host))) {
     response.valid = false
     return {

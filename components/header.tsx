@@ -25,7 +25,7 @@ export default function Header() {
               <span className={styles.notSignedInText}>
                 You are not signed in
               </span>
-              <div className={styles.buttonPrimary}>
+              <span className={styles.buttonPrimary}>
                 <a
                   href={`/api/auth/signin`}
                   onClick={(e) => {
@@ -36,7 +36,7 @@ export default function Header() {
                   <span className="material-icons">&#xea77;</span>
                   登入
                 </a>
-              </div>
+              </span>
             </>
           )}
           {session?.user && (
@@ -52,18 +52,18 @@ export default function Header() {
                 <br />
                 <strong>{session.user.name ?? session.user.email}</strong>
               </span>
-              <div className={styles.button}>
+              <span className={styles.button}>
                 <a
                   href={`/api/auth/signout`}
                   onClick={(e) => {
                     e.preventDefault()
-                    signOut()
+                    signOut({ callbackUrl: "/" })
                   }}
                 >
                   <span className="material-icons">&#xe9ba;</span>
                   登出
                 </a>
-              </div>
+              </span>
             </>
           )}
         </p>

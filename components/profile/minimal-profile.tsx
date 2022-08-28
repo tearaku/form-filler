@@ -1,22 +1,22 @@
 import { SubmitHandler, useForm } from "react-hook-form"
 import { useRouter } from "next/router"
-import { MinimalProfileData, ProfileData } from "./user-profile-type"
+import { MinimalProfileData } from "./user-profile-type"
 import { useState } from "react"
 import { toast } from "react-toastify"
+import { MinimalProfile } from "@prisma/client"
 
 interface PropType {
-  userData: MinimalProfileData
-  userId: number
+  userData: MinimalProfile
   readOnly: boolean
 }
 
-export default function MinimalProfileForm({ userData, userId, readOnly }: PropType) {
+export default function MinimalProfileForm({ userData, readOnly }: PropType) {
   const router = useRouter()
   const [waitSubmit, setWaitSubmit] = useState(false)
 
   const onSubmit: SubmitHandler<MinimalProfileData> = async (data) => {
     setWaitSubmit(true);
-    const submitPromise = fetch(`/api/minProfile/${userId}`, {
+    const submitPromise = fetch(`/api/minProfile/${userData.userId}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -47,7 +47,7 @@ export default function MinimalProfileForm({ userData, userId, readOnly }: PropT
       toast.success(res_data.message);
       router.push("/");
     } else {
-      toast.error("Error in updating minimal profile" + res_data.message);
+      toast.error("Error in updating minimal profile: \n" + res_data.message);
     }
   }
 

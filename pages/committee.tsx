@@ -9,47 +9,63 @@ import AccessDenied from "../components/access-denied"
 import { Session } from "next-auth"
 import DepartmentList from "../components/department/department-list"
 import DepartmentAdd from "../components/department/department-add"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
+import useSWR from "swr"
 
-interface PropType {
-  session: Session
-  committees: Department[]
-  viewerIsAdmin: boolean
-}
-
-export default function CommitteePage(props: PropType) {
+export default function CommitteePage(props) {
   const { data: session, status } = useSession()
   const loading = status === "loading"
+
+  const fetcher = url => fetch(url).then(res => res.json())
+  const { data, error } = useSWR(`/api/department`, fetcher)
+
+  const [viewerIsAdmin, setViewerIsAdmin] = useState(false)
+  const [deptInfo, setDeptInfo] = useState<Department[]>([])
+
+  useEffect(() => {
+    if (!data) {
+      return
+    }
+    setDeptInfo(data.data)
+  }, [data])
+
+  // Separating them as immediately using deptInfo in above
+  // may return empty instead
+  useEffect(() => {
+    deptInfo.find((dept) => {
+      if (dept.userId == session.user.id) {
+        if (dept.description.includes("網管") || dept.description.includes("社長")) {
+          setViewerIsAdmin(true)
+          return true
+        }
+      }
+    })
+  }, [deptInfo])
 
   if (loading) return <Layout><h1>Loading...</h1></Layout>
   if (!session) return <Layout><AccessDenied /></Layout>
 
+  if (!data) return <Layout><h1>Loading data...</h1></Layout>
+  if (error) return <Layout><h1>There's error in loading committee data</h1></Layout>
+
   return (
     <Layout>
       <h1>幹部資料</h1>
-      {props.viewerIsAdmin &&
+      {viewerIsAdmin &&
         <div>
           <div className="divider">新增幹部</div>
           <DepartmentAdd />
         </div>}
       <div className="divider">幹部名單＆修改</div>
-      <DepartmentList deptInfo={props.committees} viewerIsAdmin={props.viewerIsAdmin} />
+      <DepartmentList deptInfo={deptInfo} viewerIsAdmin={viewerIsAdmin} />
     </Layout>
   )
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const sessionObj = await unstable_getServerSession(context.req, context.res, authOptions)
-  const committees = await prisma.department.findMany()
-  // TODO: remove this hard-coded value of webadmin
-  const viewerRole = committees.find((dept) => {
-    return (dept.userId == sessionObj.user.id) && (dept.description.includes("網管"))
-  })
   return {
     props: {
-      session: sessionObj,
-      committees: committees,
-      viewerIsAdmin: viewerRole ? true : false,
+      session: await unstable_getServerSession(context.req, context.res, authOptions),
     },
   }
 }

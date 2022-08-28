@@ -1,21 +1,23 @@
-import { MinimalProfileData, ProfileData } from "../components/profile/user-profile-type"
+import { MinimalProfile, Profile } from "@prisma/client"
 
-export function parseProfileData(userData: { profile: ProfileData, minProfile: MinimalProfileData }) {
-  if (userData == null) {
+export function parseProfileData(profile: Profile, mProfile: MinimalProfile) {
+  if (profile == null) {
     return ({ hasFullProfile: false, profile: null, minProfile: null })
   }
-  const userProfile: ProfileData = userData.profile
-  const minUserProfile: MinimalProfileData = userData.minProfile
   return {
-    hasFullProfile: userProfile ? true : false,
-    profile: userProfile ? {
-      ...userProfile,
-      dateOfBirth: userProfile.dateOfBirth.slice(0, userProfile.dateOfBirth.indexOf("T")),
-      isMale: userProfile.isMale ? "true" : "false",
-      isStudent: userProfile.isStudent ? "true" : "false",
-      isTaiwanese: userProfile.isTaiwanese ? "true" : "false",
-    }: null,
-    minProfile: minUserProfile,
+    hasFullProfile: profile ? true : false,
+    profile: profile ? {
+      ...profile,
+      ...mProfile,
+      // The dateOfBirth itself seemed to be ISOString already (WTF??)
+      // @ts-ignore
+      dateOfBirth: parseDateString(profile.dateOfBirth as string),
+      isMale: profile.isMale ? "true" : "false",
+      isStudent: profile.isStudent ? "true" : "false",
+      isTaiwanese: profile.isTaiwanese ? "true" : "false",
+      riceAmount: profile.riceAmount as unknown as number
+    } : null,
+    minProfile: mProfile,
   }
 }
 
