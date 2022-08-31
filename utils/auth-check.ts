@@ -1,4 +1,4 @@
-import primsa from "../utils/prisma"
+import prisma from '../utils/prisma'
 import { EventRole } from '@prisma/client'
 
 export enum MINPROFILE_WHITELIST {
@@ -95,7 +95,6 @@ Expected payload: {
 }
 */
 async function checkProfile(payload: any): Promise<boolean> {
-  console.log(payload)
   // Requesting entity is owner themselves
   if (payload.userId == payload.targetUserId) {
     return true
@@ -103,7 +102,6 @@ async function checkProfile(payload: any): Promise<boolean> {
   if (payload.eventId == undefined) {
     return false
   }
-  console.log("Request from non-owner...")
   // Requesting entity has view access (host / mentor of joined expedition
   const eInfo = await prisma.event.findUnique({
     where: {
@@ -122,7 +120,6 @@ async function checkProfile(payload: any): Promise<boolean> {
     }
     return false
   })
-  console.log("Requesting entity isAdmin?: " + (isAdmin === true))
   if (isAdmin) {
     const targetIsMember = eInfo.attendants.some(att => {
       if (att.userId == payload.targetUserId) {
@@ -135,7 +132,6 @@ async function checkProfile(payload: any): Promise<boolean> {
       }
       return false
     })
-    console.log("Requested entity is a proper member?: " + (targetIsMember === true))
     if (targetIsMember) {
       return true
     }

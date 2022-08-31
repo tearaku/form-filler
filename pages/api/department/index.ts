@@ -1,4 +1,5 @@
 import { Prisma } from "@prisma/client";
+import prisma from '../../../utils/prisma';
 import { NextApiRequest, NextApiResponse } from "next";
 import { unstable_getServerSession } from 'next-auth'
 import { RESOURCE, userHasEditRights } from "../../../utils/auth-check";

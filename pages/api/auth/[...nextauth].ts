@@ -6,13 +6,8 @@ import prisma from "../../../utils/prisma"
 // Using unstable_getServerSession in API routes / serverSideProps is faster,
 // or so the doc claims XDD
 export const authOptions: NextAuthOptions = {
+  adapter: PrismaAdapter(prisma),
   providers: [
-    /*
-    FacebookProvider({
-      clientId: process.env.NODE_ENV === "production" ? (process.env.FACEBOOK_ID as string) : (process.env.FACEBOOK_ID_DEV as string),
-      clientSecret: process.env.NODE_ENV === "production" ? (process.env.FACEBOOK_SECRET as string) : (process.env.FACEBOOK_SECRET_DEV as string),
-    }),
-    */
     GoogleProvider({
       clientId: process.env.GOOGLE_ID as string,
       clientSecret: process.env.GOOGLE_SECRET as string,
@@ -27,17 +22,22 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async session({ session, token, user }) {
       // Send properties to the client, like an access_token from a provider.
-      const userData = await prisma.user.findUnique({
-        where: {
-          email: session.user.email,
-        }
-      })
-      session.user.id = userData.id
+      session.user.id = user.id
       return session
     }
   },
-  adapter: PrismaAdapter(prisma),
-  secret: process.env.SECRET,
+  events: {
+    createUser: async ({ user }) => {
+      const mProfile = await prisma.minimalProfile.create({
+        data: {
+          userId: parseInt(user.id),
+          name: "",
+          mobileNumber: "",
+        }
+      })
+      console.log(mProfile)
+    },
+  }
 }
 
 // For more information on each option (and a full list of options) go to

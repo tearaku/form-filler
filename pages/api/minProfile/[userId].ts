@@ -50,6 +50,9 @@ export default async function handler(
   res.status(405).send({ message: "Request not allowed." })
 }
 
+/*
+  Expected body payload: same as check auth of same resource
+*/
 async function getMProfile(session: Session, req: NextApiRequest, res: NextApiResponse) {
   const userId = parseInt(req.query.userId as string)
   // Checking if requested fields are publically visible, if not, requires
@@ -97,12 +100,18 @@ async function getMProfile(session: Session, req: NextApiRequest, res: NextApiRe
   res.status(200).send({ data: minUserProfile, message: "Minimal profile fetched." })
 }
 
+
+/*
+  Expected body payload:
+    formData: minProfile (see prisma schema)
+*/
 async function updateMProfile(session: Session, req: NextApiRequest, res: NextApiResponse) {
   const userId = parseInt(req.query.userId as string)
   const validReq = await userHasEditRights({
     resource: RESOURCE.MinProfile,
     payload: {
       userId: session.user.id,
+      targetUserId: userId,
     }
   })
   if (!validReq) {

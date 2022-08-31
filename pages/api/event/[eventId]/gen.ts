@@ -17,8 +17,11 @@ export default async function handler(
       return
     }
     // TODO: Check for edit authority too.....
-    const eventId = req.query.eventId
-    const validReq = await userHasEditRights({ resource: RESOURCE.Event, payload: { id: eventId, userId: session.user.id } })
+    const eventId = req.query.eventId as string
+    const validReq = await userHasEditRights({
+      resource: RESOURCE.Event,
+      payload: { id: parseInt(eventId), userId: session.user.id },
+    })
     if (!validReq) {
       res.status(403).send({ message: "Invalid request " })
       return

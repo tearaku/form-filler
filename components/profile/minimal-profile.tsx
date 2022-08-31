@@ -23,6 +23,7 @@ export default function MinimalProfileForm({ userData, readOnly }: PropType) {
       },
       body: JSON.stringify({
         formData: data,
+        method: "UPDATE",
       })
     });
     const res = await toast.promise(

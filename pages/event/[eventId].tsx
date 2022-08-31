@@ -46,8 +46,9 @@ export default function EventPage() {
   }, [eventData])
 
   function copyInviteLink(role: string) {
+    // path already contains prefix '/'
     navigator.clipboard.writeText(
-      `${document.location.toString()}/join/${eventData.inviteToken}?role=${role}`
+      `${document.location.origin}${document.location.pathname}/join/${eventData.inviteToken}?role=${role}`
     ).then(() => {
       toast.success("Link copied!", { autoClose: 1000 })
     }).catch(() => {
@@ -147,7 +148,8 @@ export default function EventPage() {
               </div>
             </div>}
           <div className="divider">成員列表</div>
-          <AttendanceList memberList={eventData.attendants} viewer={{ id: session.user.id, role: viewerRole }} />
+          {!eventData && <p>Loading event data...</p>}
+          {eventData && <AttendanceList memberList={eventData.attendants} viewer={{ id: session.user.id, role: viewerRole }} />}
         </main>}
     </Layout>
   )
