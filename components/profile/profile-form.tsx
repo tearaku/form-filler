@@ -3,6 +3,7 @@ import { useRouter } from "next/router"
 import { MinimalProfileData, ProfileData } from "./user-profile-type"
 import { useState } from "react"
 import { toast } from "react-toastify"
+import { useSession } from "next-auth/react"
 
 interface PropType {
   userData: {
@@ -15,11 +16,14 @@ interface PropType {
 
 export default function UserProfileForm({ userData, readOnly }: PropType) {
   const router = useRouter()
+  const { data: session } = useSession()
   const [waitSubmit, setWaitSubmit] = useState(false)
 
   const onSubmit: SubmitHandler<ProfileData> = async (data) => {
     setWaitSubmit(true);
-    const submitPromise = fetch(`/api/profile/${userData.profile.userId}`, {
+    // Simply using userId from session: only time this is modifiable is
+    // when you're in the profile page
+    const submitPromise = fetch(`/api/profile/${session.user.id}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

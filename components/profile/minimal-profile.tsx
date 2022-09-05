@@ -4,6 +4,7 @@ import { MinimalProfileData } from "./user-profile-type"
 import { useState } from "react"
 import { toast } from "react-toastify"
 import { MinimalProfile } from "@prisma/client"
+import { useSession } from "next-auth/react"
 
 interface PropType {
   userData: MinimalProfile
@@ -12,11 +13,12 @@ interface PropType {
 
 export default function MinimalProfileForm({ userData, readOnly }: PropType) {
   const router = useRouter()
+  const { data: session } = useSession()
   const [waitSubmit, setWaitSubmit] = useState(false)
 
   const onSubmit: SubmitHandler<MinimalProfileData> = async (data) => {
     setWaitSubmit(true);
-    const submitPromise = fetch(`/api/minProfile/${userData.userId}`, {
+    const submitPromise = fetch(`/api/minProfile/${session.user.id}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

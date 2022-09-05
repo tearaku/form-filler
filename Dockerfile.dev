@@ -1,4 +1,4 @@
-FROM node:18
+FROM node:16
 
 WORKDIR /app
 
@@ -6,7 +6,7 @@ WORKDIR /app
 COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
 # Next-auth w/ node.js v18 requires "--ignore-engines" for now
 RUN \
-  if [ -f yarn.lock ]; then yarn --frozen-lockfile --ignore-engines; \
+  if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
   elif [ -f package-lock.json ]; then npm ci; \
   elif [ -f pnpm-lock.yaml ]; then yarn global add pnpm && pnpm i; \
   else echo "Lockfile not found." && exit 1; \

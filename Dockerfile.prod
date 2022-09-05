@@ -1,38 +1,38 @@
-# Step 1. Rebuild the source code only when needed
-FROM node:18-alpine AS deps
+# --- Step 1. Rebuild the source code only when needed ---
+FROM node:16-alpine AS deps
 
+# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
+RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 # Install dependencies based on the preferred package manager
 COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
 # Omit --production flag for TypeScript devDependencies
-# --ignore-engines required for next-auth for now (node v18)
 RUN \
-  if [ -f yarn.lock ]; then yarn --frozen-lockfile --ignore-engines; \
+  if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
   elif [ -f package-lock.json ]; then npm ci; \
   elif [ -f pnpm-lock.yaml ]; then yarn global add pnpm && pnpm i; \
   else echo "Lockfile not found." && exit 1; \
   fi
 
-
-
-# Step 2. Rebuild source as necessary
-FROM node:18-alpine AS builder
+# --- Step 2. Rebuild source as necessary ---
+FROM node:16-alpine AS builder
 
 WORKDIR /app
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-# This will do the trick, use the corresponding env file for each environment.
-COPY .env.production.local .env.production
+COPY .env .env
+
 # Generate prisma client into node_modules folder
 RUN npx prisma generate
 RUN yarn build
 
 
+# --- Step 3. Production image, copy all the files and run next ---
+FROM node:16-alpine AS runner
 
-# Step 3. Production image, copy all the files and run next
-FROM node:18-alpine AS runner
+ENV NODE_ENV=production
 
 WORKDIR /app
 

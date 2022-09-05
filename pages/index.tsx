@@ -23,7 +23,7 @@ const Home: NextPage = () => {
             <div className="mt-6 w-full rounded-xl border p-6 text-left">
               <h3 className="text-2xl font-bold">功能是什麼？</h3>
               <p className="mt-4 text-xl">
-                基本上就是「整合」而已。<br />
+                基本上就是「整合」。<br />
                 把產生出隊伍公文的所有資料都集中在一處，然後讓領隊們按按鈕就生出所需公文、保險、入山檔案。<br />
                 <div className="alert alert-warning opacity-70 shadow-lg mt-2">
                   <div>
@@ -58,7 +58,7 @@ const Home: NextPage = () => {
                   </div>
                 </div>
                 <div className='divider'><span className="material-icons">&#xf233;</span>幹部清單</div>
-                就是幹部們<br />
+                幹部清單。<br />
                 重點是：請確保「社長」職位的資料保持更新。凡事「網管」或是「社長」都可以更動這裡的資料。<br />
                 交接：請社長將下一任社長新增為社長（用數字來舊新），再將自己的職位去除掉。<br />
                 <div className="alert alert-warning opacity-70 shadow-lg mt-2">
@@ -70,8 +70,8 @@ const Home: NextPage = () => {
             <div className="mt-6 w-full rounded-xl border p-6 text-left">
               <h3 className="text-2xl font-bold">跟現有的自動化檔案有什麼差別？</h3>
               <p className="mt-4 text-xl">
-                領隊：省個自己手動改公文用的資料，大概幾秒鐘吧？<br />
-                隊員：省得每次出隊都要一直填一貫作業資料表。一開始寫一次後只要資料沒有更改就都不用在填了；有更動的話再去更新。
+                領隊：省個自己手動改公文用的資料＆把資料copy到入山冊跟保險的檔案裡。<br />
+                隊員：省得每次出隊都要一直填一貫作業資料表。一開始寫一次後只要資料沒有更改就都不用在填了；有更動的話再去更新即可。
               </p>
             </div>
           </div>

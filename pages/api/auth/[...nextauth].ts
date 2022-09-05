@@ -35,9 +35,8 @@ export const authOptions: NextAuthOptions = {
           mobileNumber: "",
         }
       })
-      console.log(mProfile)
     },
-  }
+  },
 }
 
 // For more information on each option (and a full list of options) go to

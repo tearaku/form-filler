@@ -32,6 +32,9 @@ export default function CommitteePage(props) {
   // Separating them as immediately using deptInfo in above
   // may return empty instead
   useEffect(() => {
+    if (!deptInfo) {
+      return
+    }
     deptInfo.find((dept) => {
       if (dept.userId == session.user.id) {
         if (dept.description.includes("網管") || dept.description.includes("社長")) {
