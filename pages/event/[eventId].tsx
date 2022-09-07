@@ -1,4 +1,5 @@
 import type { GetServerSideProps } from "next"
+import { createHmac } from "crypto"
 import { authOptions } from "../api/auth/[...nextauth]"
 import { unstable_getServerSession } from "next-auth/next"
 import { useSession } from "next-auth/react"
@@ -46,9 +47,15 @@ export default function EventPage() {
   }, [eventData])
 
   function copyInviteLink(role: string) {
+    // create simple HMAC of invite token & host
+    const hmac = createHmac('sha512', 'a very public thing')
+    hmac.update(role)
+    hmac.update(eventData.inviteToken)
+    const digest = hmac.digest('hex')
+
     // path already contains prefix '/'
     navigator.clipboard.writeText(
-      `${document.location.origin}${document.location.pathname}/join/${eventData.inviteToken}?role=${role}`
+      `${document.location.origin}${document.location.pathname}/join/${digest}?role=${role}`
     ).then(() => {
       toast.success("Link copied!", { autoClose: 1000 })
     }).catch(() => {

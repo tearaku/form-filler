@@ -9,6 +9,7 @@ import { useRouter } from "next/router"
 import { EventRole } from "@prisma/client"
 import { mapEventRoleEnum, parseDateString } from "../../../../utils/api-parse"
 import { toast } from "react-toastify"
+import { createHmac } from "crypto"
 
 interface PropType {
   valid: boolean,
@@ -34,7 +35,7 @@ export default function JoinEvent(props: PropType) {
       body: JSON.stringify({
         userId: userId,
         role: joinRole,
-        inviteToken: router.query.inviteToken,
+        reqToken: router.query.reqToken,
       })
     })
     const res = await toast.promise(
@@ -102,6 +103,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       role: ("role" in context.query) ? context.query.role as string : "Member",
     }
   }
+
   // Disallow joining as Host (since I'm using inputs from URL xdd)
   if (!Object.keys(EventRole).some(value => (value == response.data.role) && (value != EventRole.Host))) {
     response.valid = false
@@ -112,6 +114,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       },
     }
   }
+
   const event = await prisma.event.findUnique({
     where: {
       id: parseInt(context.query.eventId as string),
@@ -124,8 +127,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     response.data.beginDate = parseDateString(event.beginDate.toISOString())
     response.data.endDate = parseDateString(event.endDate.toISOString())
     response.data.eventName = event.title
-    response.valid = context.query.inviteToken == event.inviteToken
+    // verify query param against hmac
+    const hmac = createHmac('sha512', 'a very public thing')
+    hmac.update(response.data.role)
+    hmac.update(event.inviteToken)
+    const digest = hmac.digest('hex')
+    response.valid = context.query.reqToken == digest
   }
+
   return {
     props: {
       session: await unstable_getServerSession(context.req, context.res, authOptions),

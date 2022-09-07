@@ -3,6 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { unstable_getServerSession } from 'next-auth'
 import prisma from '../../../../utils/prisma'
 import { authOptions } from '../../auth/[...nextauth]'
+import { createHmac } from "crypto"
 
 export default async function handler(
   req: NextApiRequest,
@@ -14,18 +15,22 @@ export default async function handler(
     return
   }
   // POST request, update
-  // TODO?: block updating as host-role?
   if (req.method == "POST") {
-    const { userId, role, inviteToken } = req.body
+    const { userId, role, reqToken } = req.body
     // Disallow joining as Host (as this input is taken from URL)
     if (!Object.keys(EventRole).some(value => (value == role) && (value != EventRole.Host))) {
       res.status(405).json({ message: "Invalid role." })
       return
     }
     const eventId = parseInt(req.query.eventId as string)
-    // Check validity of invite token
+
+    // Check validity of request token (HMAC digest)
     const event = await prisma.event.findUnique({ where: { id: eventId } })
-    if (!event || event.inviteToken != inviteToken) {
+    const hmac = createHmac('sha512', 'a very public thing')
+    hmac.update(role)
+    hmac.update(event.inviteToken)
+    const digest = hmac.digest('hex')
+    if (!event || digest != reqToken) {
       res.status(405).send({ message: "Invalid request." })
       return
     }

@@ -2,6 +2,9 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
 import Layout from '../components/layout'
+import tutorial_1 from "../public/tutorial_customEquip.gif"
+import tutorial_2 from "../public/tutorial_membership.gif"
+import tutorial_3 from "../public/tutorial_minProfile.gif"
 
 const Home: NextPage = () => {
   return (
@@ -20,6 +23,49 @@ const Home: NextPage = () => {
 
           <div className='divider'>FAQ</div>
           <div className="flex max-w-4xl flex-wrap items-center justify-around sm:w-full">
+            <div className="mt-6 w-full rounded-xl border p-6 text-left">
+              <h3 className="text-2xl font-bold">使用手冊</h3>
+
+              <div tabIndex={0} className="collapse collapse-plus border border-base-300 bg-base-100 rounded-box mt-6">
+                <input type="checkbox" className='peer' />
+                <div className='collapse-title text-xl font-medium'>我是開隊領隊</div>
+                <div className='collapse-content'>
+                  1. 請確認「<span className="material-icons">&#xe853;</span>個人資料」裏的「一貫作業資料」有妥善填寫好<br />
+                  2. 至「<span className="material-icons">&#xe50a;</span>隊隊伍清單」點選左上角的「新增隊伍」<br />
+                  3. 妥善填完隊伍資訊（日後依舊可以更改，請放心填寫），填完後請「新增隊伍」<br />
+                  3.1 裝備／技術裝備有不在現有欄位裡面的，可自行新增欄位（太長的內容可拆開來）<br />
+                  <br /><Image src={tutorial_1} /><br />
+                  4. 回至「<span className="material-icons">&#xe50a;</span>隊隊伍清單」點選剛新增的隊伍，點選「相關成員資料」，有四種連結發給相關人員們<br />
+                  4.1 請別搞混歐！特別是輔領的邀請連結<br />
+                  5. 人員都到參與了後，請至「相關成員資料」裡將對應的隊伍職務寫上（例：證保）<br />
+                  5.1 該隊裏面沒有「證保」人員的話，會假設是領隊包辦（保險負責人預設是領隊）<br />
+                  <br /><Image src={tutorial_2} /><br />
+                  6. 確認資料無誤後，至「隊伍基本資料」按「生成＆下載文件」
+                </div>
+              </div>
+
+              <div tabIndex={0} className="collapse collapse-plus border border-base-300 bg-base-100 rounded-box mt-6">
+                <input type="checkbox" className='peer' />
+                <div className='collapse-title text-xl font-medium'>我是出隊隊員</div>
+                <div className='collapse-content'>
+                  1. 請確認「<span className="material-icons">&#xe853;</span>個人資料」裏的「一貫作業資料」有妥善填寫好<br />
+                  2. 點開領隊給你的邀請連結<br />
+                  3. 確認內容無誤後，按確定<br />
+                </div>
+              </div>
+
+              <div tabIndex={0} className="collapse collapse-plus border border-base-300 bg-base-100 rounded-box mt-6">
+                <input type="checkbox" className='peer' />
+                <div className='collapse-title text-xl font-medium'>我是山難／留守</div>
+                <div className='collapse-content'>
+                  1. 請確認「<span className="material-icons">&#xe853;</span>個人資料」裏的「簡易資料」有妥善填寫好<br />
+                  2. 點開領隊給你的邀請連結<br />
+                  3. 確認內容無誤後，按確定<br />
+                  <br /><Image src={tutorial_3} />
+                </div>
+              </div>
+
+            </div>
             <div className="mt-6 w-full rounded-xl border p-6 text-left">
               <h3 className="text-2xl font-bold">功能是什麼？</h3>
               <p className="mt-4 text-xl">
@@ -96,8 +142,8 @@ const Home: NextPage = () => {
             </a>
           </div>
         </footer>
-      </div>
-    </Layout>
+      </div >
+    </Layout >
   )
 }
 
