@@ -1,15 +1,26 @@
 import Link from "next/link"
 import useSWR from "swr"
+import { Attendance } from "../../types/attendance"
 import { parseDateString } from "../../utils/api-parse"
 import { EventData_API } from "./event-type"
+import { EventRole } from "@prisma/client"
 
 interface PropType {
   eventData: EventData_API
 }
 
+// Returns: user id of the leader of expedition
+function getLeader(attendants: Attendance[]): number {
+  return attendants.find((att) => {
+    if (att.role == EventRole.Host) {
+      return att
+    }
+  }).userId
+}
+
 export default function EventRow({ eventData }: PropType) {
   const fetcher = url => fetch(url).then(res => res.json())
-  const { data, error } = useSWR(`/api/minProfile/${eventData.attendants[0].userId}`, fetcher)
+  const { data, error } = useSWR(`/api/minProfile/${getLeader(eventData.attendants)}`, fetcher)
 
   return (
     <tr>

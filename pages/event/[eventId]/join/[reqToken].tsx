@@ -68,7 +68,10 @@ export default function JoinEvent(props: PropType) {
     return (
       <Layout>
         <AccessDenied />
-        <main><h1>第一次使用嗎？請先登入且填寫「一慣作業資料」；若為山難／留守，可只先填寫「簡易資料」即可。</h1></main>
+        <main>
+          <h1>第一次使用嗎？請先登入且填寫「一慣作業資料」；若為山難／留守，可只先填寫「簡易資料」即可（之後出隊依舊需要填寫完整的資料歐）。</h1>
+          <h2>填寫完畢後，請記得返回此頁面按下「確認參與」歐！</h2>
+        </main>
       </Layout>
     )
   }

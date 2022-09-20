@@ -1,3 +1,4 @@
+import { Prisma } from '@prisma/client'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { Session, unstable_getServerSession } from 'next-auth'
 import { ProfileData } from '../../../components/profile/user-profile-type'
@@ -182,6 +183,9 @@ async function updateProfile(session: Session, req: NextApiRequest, res: NextApi
     res.status(200).json({ message: 'Successfully updated / created user profile.' })
   }).catch(err => {
     console.log(err)
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      // TODO: give context to error (add in user id?)
+    }
     res.status(500).json({ message: "Updating / creating new profile failed." })
   })
 }

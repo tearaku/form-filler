@@ -110,7 +110,7 @@ export default function AttendanceRow({ memberInfo, index, viewer }: PropType) {
               {pubMProfile.data ? pubMProfile.data.name : "無資料"}
               <span className="material-icons">&#xe89e;</span>
             </a>
-            <div className="text-sm opacity-70">FB：{resUser.data.name}</div>
+            <div className="text-sm opacity-70">Alt: {resUser.data.name}</div>
           </div>
         </div>
       </td>
