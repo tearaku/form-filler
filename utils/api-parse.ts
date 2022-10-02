@@ -1,4 +1,5 @@
-import { MinimalProfile, Profile } from "@prisma/client"
+import { MinimalProfile, Profile, Attendance, EventRole } from "@prisma/client"
+import { EventData_API } from "../components/event/event-type"
 
 export function parseProfileData(profile: Profile, mProfile: MinimalProfile) {
   if (profile == null) {
@@ -24,6 +25,17 @@ export function parseProfileData(profile: Profile, mProfile: MinimalProfile) {
 export function hasAdminRights(role: string): boolean {
   if ((role == "Host") || (role == "Mentor")) return true
   return false
+}
+
+export function canViewFood(aList: Attendance[], viewerId: number): boolean {
+  return aList.some(att => {
+    if (att.userId == viewerId) {
+      if (att.role == EventRole.Host || att.role == EventRole.Mentor) {
+        return true
+      }
+      return att.jobs.includes("大廚")
+    }
+  });
 }
 
 export function parseDateString(dateStr: string): string {

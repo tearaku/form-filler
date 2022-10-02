@@ -12,6 +12,8 @@ export enum PROFILE_WHITELIST {
   IsMale,
   IsStudent,
   MajorYear,
+  RiceAmount,
+  FoodPreference
 }
 
 export enum RESOURCE {

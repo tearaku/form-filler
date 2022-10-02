@@ -11,8 +11,9 @@ import { EquipData, EventData, EventData_API } from "../../components/event/even
 import EventRegister from "../../components/event/register"
 import { equipBaseList, techBaseList } from "../../components/event/register"
 import Layout from "../../components/layout"
-import { parseDateString, hasAdminRights } from "../../utils/api-parse"
+import { parseDateString, hasAdminRights, canViewFood } from "../../utils/api-parse"
 import { toast } from "react-toastify"
+import FoodPreferenceModal from "../../components/event/food-preference-modal"
 
 export default function EventPage() {
   const { data: session, status } = useSession()
@@ -110,25 +111,36 @@ export default function EventPage() {
       <br />
       {activeTab == 0 &&
         <main>
-          {hasAdminRights(viewerRole) &&
-            <div>
-              <button onClick={() => toggleEditMode(prev => !prev)} className="btn btn-info">
-                {editMode ? <span className="material-icons">&#xe3c9;</span> : <span className="material-icons">&#xe950;</span>}
-                編輯模式 {editMode ? "ON" : "OFF"}
-              </button>
-              <button onClick={generateFiles} className="btn btn-success">
-                <span className="material-icons">&#xe2c4;</span>
-                生成＆下載文件
-                {waitSubmit &&
-                  <progress className="progress w-50"></progress>}
-              </button>
-            </div>}
-          {!eventData && <p>Loading event data...</p>}
-          {eventData &&
-            <EventRegister readMode={!editMode} userId={session.user.id}
-              eventInfo={{ eventData: eventData_toForm(eventData), eventId: eventData.id }}
-            />
-          }
+          <div>
+            {eventData && canViewFood(eventData.attendants, session.user.id) &&
+              <div>
+                <a href={`#menu`} className="btn btn-warning font-bold">
+                  <span className="material-icons">&#xe56c;</span>
+                  人員食性
+                </a>
+                <FoodPreferenceModal memberList={eventData.attendants} />
+              </div>
+            }
+            {hasAdminRights(viewerRole) &&
+              <div>
+                <button onClick={() => toggleEditMode(prev => !prev)} className="btn btn-info">
+                  {editMode ? <span className="material-icons">&#xe3c9;</span> : <span className="material-icons">&#xe950;</span>}
+                  編輯模式 {editMode ? "ON" : "OFF"}
+                </button>
+                <button onClick={generateFiles} className="btn btn-success">
+                  <span className="material-icons">&#xe2c4;</span>
+                  生成＆下載文件
+                  {waitSubmit &&
+                    <progress className="progress w-50"></progress>}
+                </button>
+              </div>}
+            {!eventData && <p>Loading event data...</p>}
+            {eventData &&
+              <EventRegister readMode={!editMode} userId={session.user.id}
+                eventInfo={{ eventData: eventData_toForm(eventData), eventId: eventData.id }}
+              />
+            }
+          </div>
         </main>}
       {activeTab == 1 &&
         <main>
