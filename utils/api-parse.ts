@@ -33,7 +33,7 @@ export function canViewFood(aList: Attendance[], viewerId: number): boolean {
       if (att.role == EventRole.Host || att.role == EventRole.Mentor) {
         return true
       }
-      return att.jobs.includes("大廚")
+      return att.jobs?.includes("大廚")
     }
   });
 }
