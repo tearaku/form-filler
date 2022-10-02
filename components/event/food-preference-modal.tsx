@@ -2,16 +2,23 @@ import { Attendance } from "@prisma/client"
 import { MinProfileRes, ProfileRes } from "../../types/resources";
 import useSWR from "swr";
 import { profileFetcher, minProfileFetcher } from "../../utils/fetcher";
+import { useContext, useEffect } from "react";
+import { FoodPrefContext, FoodPrefContextProvider } from "../../contexts/food-pref-context";
 
 interface PropType {
   memberList: Attendance[]
 }
 
 export default function FoodPreferenceModal({ memberList }: PropType) {
+  const menuState = useContext(FoodPrefContext)
+
   return (
     <div className="modal" id={`menu`}> <div className="modal-box">
       <main className="mb-6">
         <h1 className="font-bold text-lg items-center">人員食性</h1>
+        <h3>總米兩：{menuState.riceAmount}</h3>
+        <h3>男女比：{menuState.numOfMales} - {menuState.numOfFemales}</h3>
+        <h3>一餐餅乾數量（以男2/3女1/2條算）：{computeCookieCount(menuState)}</h3>
       </main>
       <div className="overflow-x-auto">
         <table className="table table-zebra w-full">
@@ -44,6 +51,9 @@ interface PropType_Row {
 }
 
 function FoodPreferenceRow({ member, index }: PropType_Row) {
+  // To communicate w/ its parent --> for totalling rice amount
+  const menuContext = useContext(FoodPrefContext)
+
   const { data: resProfile, error: resProfileErr } = useSWR(
     [`/api/profile/${member.userId}`, seekProfile, member.eventId],
     profileFetcher, {
@@ -62,6 +72,17 @@ function FoodPreferenceRow({ member, index }: PropType_Row) {
       if (error.status == 404) return
     }
   })
+
+  // Updating food context
+  useEffect(() => {
+    if (!resProfile) { return }
+    if (resProfile.data.IsMale) {
+      menuContext.setNumOfFemales()
+    } else {
+      menuContext.setNumOfMales()
+    }
+    menuContext.setRiceAmount(parseFloat(resProfile.data.riceAmount))
+  }, [resProfile])
 
   if (!resProfile || !resMProfile) return <tr key={`member_${index}`}>Loading...</tr>
   if (resProfileErr || resMProfileErr) return <tr key={`member_${index}`}>Error in loading user data!</tr>
@@ -89,4 +110,8 @@ const seekProfile: ProfileRes = {
 const seekMinProfile: MinProfileRes = {
   UserId: true,
   Name: true,
+}
+
+const computeCookieCount = (foodContext): number => {
+  return (foodContext.numOfMales * (2 / 3)) + (foodContext.numOfFemales * (1 / 2))
 }

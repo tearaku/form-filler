@@ -14,6 +14,7 @@ import Layout from "../../components/layout"
 import { parseDateString, hasAdminRights, canViewFood } from "../../utils/api-parse"
 import { toast } from "react-toastify"
 import FoodPreferenceModal from "../../components/event/food-preference-modal"
+import { FoodPrefContextProvider } from "../../contexts/food-pref-context"
 
 export default function EventPage() {
   const { data: session, status } = useSession()
@@ -109,6 +110,7 @@ export default function EventPage() {
         <button onClick={() => { setActiveTab(1) }} className="btn btn-outline">相關成員資料</button>
       </div>
       <br />
+      <div className="divider">職務作業區</div>
       {activeTab == 0 &&
         <main>
           <div>
@@ -118,7 +120,10 @@ export default function EventPage() {
                   <span className="material-icons">&#xe56c;</span>
                   人員食性
                 </a>
-                <FoodPreferenceModal memberList={eventData.attendants} />
+
+                <FoodPrefContextProvider>
+                  <FoodPreferenceModal memberList={eventData.attendants} />
+                </FoodPrefContextProvider>
               </div>
             }
             {hasAdminRights(viewerRole) &&
