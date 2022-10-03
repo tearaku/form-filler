@@ -1,4 +1,4 @@
-import { Attendance } from "@prisma/client"
+import { Attendance, EventRole } from "@prisma/client"
 import { MinProfileRes, ProfileRes } from "../../types/resources";
 import useSWR from "swr";
 import { profileFetcher, minProfileFetcher } from "../../utils/fetcher";
@@ -19,6 +19,7 @@ export default function FoodPreferenceModal({ memberList }: PropType) {
         <h3>總米兩：{menuState.riceAmount}</h3>
         <h3>男女比：{menuState.numOfMales} - {menuState.numOfFemales}</h3>
         <h3>一餐餅乾數量（以男2/3女1/2條算）：{computeCookieCount(menuState)}</h3>
+        <h3>請先確保大家有好好填寫食量＆食性，再拿上列計算歐！</h3>
       </main>
       <div className="overflow-x-auto">
         <table className="table table-zebra w-full">
@@ -32,6 +33,10 @@ export default function FoodPreferenceModal({ memberList }: PropType) {
           </thead>
           <tbody>
             {memberList.map((member, idx) => {
+              // Only want to count those that aren't going out
+              if (member.role == EventRole.Rescue || member.role == EventRole.Watcher) {
+                return
+              }
               return (<FoodPreferenceRow member={member} index={idx} />)
             })}
           </tbody>
@@ -75,7 +80,7 @@ function FoodPreferenceRow({ member, index }: PropType_Row) {
 
   // Updating food context
   useEffect(() => {
-    if (!resProfile) { return }
+    if (!resProfile || !resProfile.data) { return }
     if (resProfile.data.IsMale) {
       menuContext.setNumOfFemales()
     } else {
@@ -95,8 +100,8 @@ function FoodPreferenceRow({ member, index }: PropType_Row) {
           {resMProfile.data ? resMProfile.data.name : "無資料"}
         </div>
       </td>
-      <td>{resProfile.data.riceAmount}</td>
-      <td>{resProfile.data.foodPreference}</td>
+      <td>{resProfile.data ? resProfile.data.riceAmount : "無資料"}</td>
+      <td>{resProfile.data ? resProfile.data.foodPreference : "無資料"}</td>
     </tr>
   )
 }
