@@ -29,13 +29,11 @@ export interface RequestContext {
   payload: any
 }
 
-/*
-Expected payload: {
+interface CheckEventParam {
   id: number,
   userId: number,
 }
-*/
-async function checkEvent(payload: any): Promise<boolean> {
+async function checkEvent(payload: CheckEventParam): Promise<boolean> {
   try {
     const roleInEvent = await prisma.attendance.findUnique({
       where: {
@@ -57,12 +55,10 @@ async function checkEvent(payload: any): Promise<boolean> {
   return false
 }
 
-/*
-Expected payload: {
+interface CheckDeptParam {
   userId: number,
 }
-*/
-async function checkDept(payload: any): Promise<boolean> {
+async function checkDept(payload: CheckDeptParam): Promise<boolean> {
   try {
     await prisma.department.findFirst({
       where: {
@@ -88,15 +84,13 @@ async function checkDept(payload: any): Promise<boolean> {
   }
 }
 
-/*
-Expected payload: {
+interface CheckProfileParam {
   // Requesting entity's userId
   userId: number,
   targetUserId: number,
   eventId?: number,
 }
-*/
-async function checkProfile(payload: any): Promise<boolean> {
+async function checkProfile(payload: CheckProfileParam): Promise<boolean> {
   // Requesting entity is owner themselves
   if (payload.userId == payload.targetUserId) {
     return true
@@ -141,15 +135,13 @@ async function checkProfile(payload: any): Promise<boolean> {
   return false
 }
 
-/*
-Expected payload: {
+interface CheckMProfileParam {
   // Requesting entity's userId
   userId: number,
   targetUserId: number,
   eventId?: number,
 }
-*/
-async function checkMProfile(payload: any): Promise<boolean> {
+async function checkMProfile(payload: CheckMProfileParam): Promise<boolean> {
   // Requesting entity is owner themselves
   if (payload.userId == payload.targetUserId) {
     return true

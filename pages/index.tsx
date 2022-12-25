@@ -1,6 +1,7 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
+
 import Layout from '../components/layout'
 import tutorial_1 from "../public/tutorial_customEquip.gif"
 import tutorial_2 from "../public/tutorial_membership.gif"

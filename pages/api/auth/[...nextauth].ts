@@ -18,6 +18,7 @@ export const authOptions: NextAuthOptions = {
   },
   pages: {
     newUser: '/profile',
+    signIn: '/auth/signIn',
   },
   callbacks: {
     async session({ session, token, user }) {
@@ -28,7 +29,7 @@ export const authOptions: NextAuthOptions = {
   },
   events: {
     createUser: async ({ user }) => {
-      const mProfile = await prisma.minimalProfile.create({
+      await prisma.minimalProfile.create({
         data: {
           userId: parseInt(user.id),
           name: "",
