@@ -1,15 +1,19 @@
-import { useSession } from "next-auth/react"
-import { authOptions } from "../../../api/auth/[...nextauth]"
-import { unstable_getServerSession } from "next-auth/next"
-import Layout from "../../../../components/layout"
-import type { GetServerSideProps } from "next"
-import AccessDenied from "../../../../components/access-denied"
-import prisma from "../../../../utils/prisma"
-import { useRouter } from "next/router"
-import { EventRole } from "@prisma/client"
-import { mapEventRoleEnum, parseDateString } from "../../../../utils/api-parse"
-import { toast } from "react-toastify"
 import { createHmac } from "crypto"
+
+import { toast } from "react-toastify"
+import { unstable_getServerSession } from "next-auth/next"
+import { useRouter } from "next/router"
+import { useSession } from "next-auth/react"
+
+import prisma from "../../../../utils/prisma"
+import { authOptions } from "../../../api/auth/[...nextauth]"
+import { mapEventRoleEnum, parseDateString } from "../../../../utils/api-parse"
+
+import AccessDenied from "../../../../components/access-denied"
+import Layout from "../../../../components/layout"
+import ReminderText from "../../../../components/reminder"
+import type { GetServerSideProps } from "next"
+import { EventRole } from "@prisma/client"
 
 interface PropType {
   valid: boolean,
@@ -78,7 +82,7 @@ export default function JoinEvent(props: PropType) {
 
   return (
     <Layout>
-      <h1>加入隊伍</h1>
+      <h1 className="divider">加入隊伍</h1>
       {(!props.valid) &&
         <main>
           <h2 style={{ color: 'red' }}>查無此活動／邀請網址有誤！</h2>
@@ -89,7 +93,10 @@ export default function JoinEvent(props: PropType) {
           <h2>活動名稱：{props.data.eventName}</h2>
           <h2>活動日期：{props.data.beginDate}～{props.data.endDate}</h2>
           <h2>參與身份：{mapEventRoleEnum(props.data.role)}</h2>
-          <button onClick={() => joinSuccess(router.query.eventId, session.user.id, props.data.role)} className="btn btn-success">確認參與</button>
+          <ReminderText />
+          <div className="flex justify-center items-center">
+            <button onClick={() => joinSuccess(router.query.eventId, session.user.id, props.data.role)} className="btn btn-success btn-outline">確認參與</button>
+          </div>
         </main>}
     </Layout>
   )

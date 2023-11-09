@@ -1,20 +1,24 @@
-import type { GetServerSideProps } from "next"
-import { createHmac } from "crypto"
-import { authOptions } from "../api/auth/[...nextauth]"
-import { unstable_getServerSession } from "next-auth/next"
-import { useSession } from "next-auth/react"
-import { useRouter } from "next/router"
-import { useEffect, useState } from "react"
 import useSWR from "swr"
-import AttendanceList from "../../components/event/attendance-list"
-import { EquipData, EventData, EventData_API } from "../../components/event/event-type"
-import EventRegister from "../../components/event/register"
-import { equipBaseList, techBaseList } from "../../components/event/register"
-import Layout from "../../components/layout"
-import { parseDateString, hasAdminRights, canViewFood } from "../../utils/api-parse"
+import { createHmac } from "crypto"
 import { toast } from "react-toastify"
+import { unstable_getServerSession } from "next-auth/next"
+import { useEffect, useState } from "react"
+import { useRouter } from "next/router"
+import { useSession } from "next-auth/react"
+
+import AttendanceList from "../../components/event/attendance-list"
+import EventRegister from "../../components/event/register"
 import FoodPreferenceModal from "../../components/event/food-preference-modal"
+import ImportEquipModal from "../../components/event/import-equipment-modal"
+import Layout from "../../components/layout"
+import Link from "next/link"
+import type { GetServerSideProps } from "next"
+import { EquipData, EventData, EventData_API } from "../../components/event/event-type"
 import { FoodPrefContextProvider } from "../../contexts/food-pref-context"
+
+import { authOptions } from "../api/auth/[...nextauth]"
+import { equipBaseList, techBaseList } from "../../components/event/base-equip"
+import { parseDateString, hasAdminRights, canViewFood, canAccessEquip } from "../../utils/api-parse"
 
 export default function EventPage() {
   const { data: session, status } = useSession()
@@ -139,6 +143,22 @@ export default function EventPage() {
                     <progress className="progress w-50"></progress>}
                 </button>
               </div>}
+            {eventData && canAccessEquip(viewerRole, eventData.attendants, session.user.id) &&
+              <div>
+                {/** @ts-ignore */}
+                <button onClick={() => document.getElementById("equip_import_modal").showModal()} className="btn btn-outline">
+                  匯入技術裝備資料
+                </button>
+                <button className="btn btn-square btn-outline">
+                  <Link href="/tutorial/import_equip">教學</Link>
+                </button>
+
+                <ImportEquipModal
+                  user_id={session.user.id}
+                  event_id={router.query.eventId as string}
+                />
+              </div>
+            }
             {!eventData && <p>Loading event data...</p>}
             {eventData &&
               <EventRegister readMode={!editMode} userId={session.user.id}

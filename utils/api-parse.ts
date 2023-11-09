@@ -38,6 +38,19 @@ export function canViewFood(aList: Attendance[], viewerId: number): boolean {
   });
 }
 
+/** Requires checking both role & job description, as the following people can edit:
+  * (a) admin roles
+  * (b) those appointed to equipment management job
+  */
+export function canAccessEquip(role: string, aList: Attendance[], viewerId: number): boolean {
+  if (hasAdminRights(role)) return true;
+  return aList
+    .filter(att => {
+      return (att.userId === viewerId) && (att.jobs?.includes("裝備"));
+    })
+    .length > 0;
+}
+
 export function parseDateString(dateStr: string): string {
   return dateStr.substring(0, dateStr.indexOf("T"))
 }

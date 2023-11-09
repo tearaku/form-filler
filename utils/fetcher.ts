@@ -1,8 +1,14 @@
+import { ProfileRes, MinProfileRes } from "./../types/resources";
+
 class FetchError extends Error {
   status: number | undefined
 }
 
-export const profileFetcher = (url, pList, eventId?) => fetch(url, {
+export const profileFetcher = (
+  url: string,
+  pList: ProfileRes,
+  eventId?: number,
+) => fetch(url, {
   method: "POST",
   headers: {
     "Content-Type": "application/json",
@@ -21,8 +27,11 @@ export const profileFetcher = (url, pList, eventId?) => fetch(url, {
   return res.json()
 })
 
-
-export const minProfileFetcher = (url, mpList, eventId?) => fetch(url, {
+export const minProfileFetcher = (
+  url: string,
+  mpList: MinProfileRes,
+  eventId?: number,
+) => fetch(url, {
   method: "POST",
   headers: {
     "Content-Type": "application/json",

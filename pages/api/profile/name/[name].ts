@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import { Session, unstable_getServerSession } from 'next-auth'
 import { RESOURCE, userHasEditRights } from '../../../../utils/auth-check'
 import { authOptions } from '../../auth/[...nextauth]'
+import prisma from '../../../../utils/prisma';
 
 export default async function handler(
   req: NextApiRequest,

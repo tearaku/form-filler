@@ -72,8 +72,8 @@ export default function DepartmentAdd() {
               return (<DepartmentAddQuery userInfo={{
                 userId: member.userId,
                 name: member.name,
-                isStudent: qProfileList.at(index).isStudent,
-                majorYear: qProfileList.at(index).majorYear,
+                isStudent: qProfileList[index].isStudent,
+                majorYear: qProfileList[index].majorYear || '無資料',
               }}
               />)
             })}

@@ -1,11 +1,11 @@
 import { SubmitHandler, useFieldArray, useForm } from "react-hook-form"
-import { useRouter } from "next/router"
-import { EquipData, EventData, EventData_API } from "./event-type"
-import { useEffect, useState } from "react"
 import { toast } from "react-toastify"
+import { useState } from "react"
+import { useRouter } from "next/router"
 
-export const equipBaseList = ["帳棚", "鍋組（含湯瓢、鍋夾）", "爐頭", "Gas", "糧食", "預備糧", "山刀", "鋸子", "路標", "衛星電話", "收音機", "無線電", "傘帶", "Sling", "無鎖鉤環", "急救包", "GPS", "包溫瓶"]
-export const techBaseList = ["主繩", "吊帶", "上升器", "下降器", "岩盔", "有鎖鉤環", "救生衣"]
+import { equipBaseList, techBaseList } from './base-equip';
+
+import { EventData } from "./event-type"
 
 interface PropType {
   userId: number
@@ -165,12 +165,14 @@ export default function EventRegister({ userId, readMode, eventInfo }: PropType)
               <div className="inline-block">
                 <label className="label">裝備名稱</label>
                 <input {...register(`equip_add.${index}.name` as const, { required: true })} type="text" disabled={readMode} className="input input-bordered w-full max-w-xs" />
+                {errors.equip_add?.[index]?.name && <p style={{ color: 'red' }}>裝備名稱不可空！</p>}
               </div>
               <div className="inline-block">
                 <label className="label">裝備數量／形容</label>
                 <input {...register(`equip_add.${index}.des` as const, { required: true })} type="text" disabled={readMode} className="input input-bordered w-full max-w-xs" />
               </div>
               <button type="button" onClick={() => equipFields.remove(index)} disabled={readMode} className="btn btn-error btn-square inline-block">刪除</button>
+              {errors.equip_add?.[index]?.des && <p style={{ color: 'red' }}>裝備敘述不可空！</p>}
             </div>
           )
         })}
@@ -202,12 +204,14 @@ export default function EventRegister({ userId, readMode, eventInfo }: PropType)
               <div className="inline-block">
                 <label className="label">裝備名稱</label>
                 <input {...register(`techEquip_add.${index}.name` as const, { required: true })} type="text" disabled={readMode} className="input input-bordered w-full max-w-xs" />
+                {errors.techEquip_add?.[index]?.name && <p style={{ color: 'red' }}>裝備名稱不可空！</p>}
               </div>
               <div className="inline-block">
                 <label className="label">裝備數量／形容</label>
                 <input {...register(`techEquip_add.${index}.des` as const, { required: true })} type="text" disabled={readMode} className="input input-bordered w-full max-w-xs" />
               </div>
               <button type="button" onClick={() => techEquipFields.remove(index)} disabled={readMode} className="btn btn-error btn-square inline-block">刪除</button>
+              {errors.techEquip_add?.[index]?.des && <p style={{ color: 'red' }}>裝備名稱不可空！</p>}
             </div>
           )
         })}
